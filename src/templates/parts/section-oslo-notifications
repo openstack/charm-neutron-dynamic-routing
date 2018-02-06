@@ -1,0 +1,5 @@
+{% if amqp.transport_url -%}
+[oslo_messaging_notifications]
+driver = messagingv2
+transport_url = {{ amqp.transport_url }}
+{% endif -%}

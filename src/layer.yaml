@@ -1,0 +1,8 @@
+includes:
+  - layer:openstack-principle
+  - interface:rabbitmq
+#repo: https://github.com/openstack/charm-neutron-dynamic-routing
+options:
+  basic:
+    use_venv: true
+    include_system_packages: true

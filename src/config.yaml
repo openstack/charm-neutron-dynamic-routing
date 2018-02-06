@@ -1,0 +1,6 @@
+options:
+  bgp-peer-ips:
+    default:
+    type: string
+    description: |
+      Space delimited IPs of BGP peers.
