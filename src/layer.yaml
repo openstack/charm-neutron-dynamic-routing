@@ -1,6 +1,7 @@
 includes:
   - layer:openstack-principle
   - interface:rabbitmq
+  - interface:bgp
 #repo: https://github.com/openstack/charm-neutron-dynamic-routing
 options:
   basic:

@@ -89,23 +89,6 @@ class TransportURLAdapter(os_adapters.RabbitMQRelationAdapter):
         return self.ssl_port or 5672
 
 
-class BGPPeerRelationAdapter(os_adapters.OpenStackRelationAdapter):
-
-    """
-    STub Adapter for the BGPPeerProvides relation interface.
-    """
-
-    interface_type = 'bgp'
-
-    @property
-    def provider_ip(self):
-        return ch_ip.get_relation_ip('provider')
-
-    @property
-    def speaker_ip(self):
-        return ch_ip.get_relation_ip('speaker')
-
-
 class DRAgentCharm(charms_openstack.charm.OpenStackCharm):
     """DRAgentCharm provides the specialisation of the OpenStackCharm
     functionality to manage a dragent unit.
@@ -123,7 +106,6 @@ class DRAgentCharm(charms_openstack.charm.OpenStackCharm):
     adapters_class = os_adapters.OpenStackRelationAdapters
     adapters_class.relation_adapters = {
         'amqp': TransportURLAdapter,
-        'bgp': BGPPeerRelationAdapter,
     }
 
     restart_map = {

@@ -33,6 +33,21 @@ charm.use_defaults(
     'update-status')
 
 
+@reactive.when('charm.installed')
+def debug():
+    if not hookenv.config('debug'):
+        return
+    for key, value in reactive.get_states().items():
+        print(key, value)
+
+
+# Use for testing with the quagga charm
+@reactive.when('endpoint.bgp-speaker.joined')
+def publish_bgp_info(endpoint):
+    endpoint.publish_info(asn=hookenv.config('asn'),
+                          passive=True)
+
+
 @reactive.when('amqp.connected')
 def setup_amqp_req(amqp):
     """Use the amqp interface to request access to the amqp broker using our
@@ -43,15 +58,11 @@ def setup_amqp_req(amqp):
     dragent.assess_status()
 
 
-# Note that because of the way reactive.when works, (which is to 'find' the
-# __code__ segment of the decorated function, it's very, very difficult to add
-# other kinds of decorators here.  This rules out adding other things into the
-# charm args list.  It is also CPython dependent.
 @reactive.when('amqp.available')
-def render_stuff(amqp):
-    """Render the configuration for Barbican when all the interfaces are
+def render_stuff(*args):
+    """Render the configuration for dyanmic routing when all the interfaces are
     available.
     """
-    hookenv.log("about to call the render_configs with {}".format(amqp))
-    dragent.render_configs(amqp)
+    hookenv.log("about to call the render_configs with {}".format(args))
+    dragent.render_configs(args)
     dragent.assess_status()

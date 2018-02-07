@@ -15,3 +15,7 @@ extra-bindings:
 requires:
   amqp:
     interface: rabbitmq
+provides:
+  bgp-speaker:
+    interface: bgp
+    optional: true
