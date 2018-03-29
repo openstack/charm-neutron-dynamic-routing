@@ -33,6 +33,9 @@ DRAGENT_CONF = NEUTRON_DIR + "bgp_dragent.ini"
 OPENSTACK_RELEASE_KEY = ('neutron-dynamic-routing-charm.'
                          'openstack-release-version')
 
+SPEAKER_BINDING = 'bgp-speaker'
+PROVIDER_BINDING = 'provider'
+
 
 # select the default release function
 charms_openstack.charm.use_defaults('charm.default-select-release')
@@ -57,14 +60,22 @@ def assess_status():
     DRAgentCharm.singleton.assess_status()
 
 
+def bgp_speaker_bindings():
+    """Speaker bindings for bgp interface
+
+    :return: list of bindings
+    """
+    return [SPEAKER_BINDING]
+
+
 @os_adapters.config_property
 def provider_ip(cls):
-    return ch_ip.get_relation_ip('provider')
+    return ch_ip.get_relation_ip(PROVIDER_BINDING)
 
 
 @os_adapters.config_property
 def speaker_ip(cls):
-    return ch_ip.get_relation_ip('speaker')
+    return ch_ip.get_relation_ip(SPEAKER_BINDING)
 
 
 class TransportURLAdapter(os_adapters.RabbitMQRelationAdapter):

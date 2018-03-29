@@ -10,8 +10,8 @@ series:
   - bionic
 subordinate: false
 extra-bindings:
+  # Used to specify the OpenStack provider network interface
   provider:
-  speaker:
 requires:
   amqp:
     interface: rabbitmq

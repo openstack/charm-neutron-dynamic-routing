@@ -45,7 +45,8 @@ def debug():
 @reactive.when('endpoint.bgp-speaker.joined')
 def publish_bgp_info(endpoint):
     endpoint.publish_info(asn=hookenv.config('asn'),
-                          passive=True)
+                          passive=True,
+                          bindings=dragent.bgp_speaker_bindings())
 
 
 @reactive.when('amqp.connected')
