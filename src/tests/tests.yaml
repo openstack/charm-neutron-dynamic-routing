@@ -1,0 +1,12 @@
+charm_name: neutron-dynamic-routing
+tests:
+  - zaza.charm_tests.dragent.tests.DRAgentTest
+configure:
+  - zaza.charm_tests.dragent.configure.setup
+gate_bundles:
+  - xenial-queens-functional
+  - xenial-pike-functional
+smoke_bundles:
+  - xenial-queens-functional
+dev_bundles:
+  - bionic-queens-functional
