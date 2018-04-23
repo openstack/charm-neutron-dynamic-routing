@@ -44,37 +44,72 @@ charms_openstack.charm.use_defaults('charm.default-select-release')
 def render_configs(interfaces_list):
     """Using a list of interfaces, render the configs and, if they have
     changes, restart the services on the unit.
+
+    :returns: None
     """
-    # Starting out with just amqp
+
     try:
         [i for i in interfaces_list]
     except TypeError:
         interfaces_list = [interfaces_list]
+    # TODO: Add bgp-speaker as an optional interface.
+    # Currently, charms.openstack does not understand endpoints and will need
+    # to be updated for this functionality.
     DRAgentCharm.singleton.render_with_interfaces(interfaces_list)
 
 
 def assess_status():
     """Just call the DRAgentCharm.singleton.assess_status() command to update
     status on the unit.
+
+    :returns: None
     """
+
     DRAgentCharm.singleton.assess_status()
 
 
-def bgp_speaker_bindings():
-    """Speaker bindings for bgp interface
+def upgrade_if_available(interfaces_list):
+    """Just call the DRAgentCharm.singleton.upgrade_if_available() command to
+    update OpenStack package if upgrade is available
 
-    :return: list of bindings
+    @returns: None
     """
+
+    DRAgentCharm.singleton.upgrade_if_available(interfaces_list)
+
+
+def bgp_speaker_bindings():
+    """Return BGP speaker bindings for the bgp interface
+
+    :returns: list of bindings
+    """
+
     return [SPEAKER_BINDING]
 
 
 @os_adapters.config_property
 def provider_ip(cls):
+    """Return the provider binding network IP
+
+    Use the extra binding, provider, to determine the correct provider network
+    IP.
+
+    :returns: string IP address
+    """
+
     return ch_ip.get_relation_ip(PROVIDER_BINDING)
 
 
 @os_adapters.config_property
 def speaker_ip(cls):
+    """Return the BGP speaker binding network IP
+
+    Use the interface-bgp relation binding, to determine the correct bgp
+    network IP.
+
+    :returns: string IP address
+    """
+
     return ch_ip.get_relation_ip(SPEAKER_BINDING)
 
 
@@ -85,6 +120,10 @@ class TransportURLAdapter(os_adapters.RabbitMQRelationAdapter):
 
     @property
     def transport_url(self):
+        """Return the transport URL for communicating with rabbitmq
+
+        :returns: string transport URL
+        """
         hosts = self.hosts or [self.host]
         if hosts:
             transport_url_hosts = ','.join([
@@ -97,6 +136,10 @@ class TransportURLAdapter(os_adapters.RabbitMQRelationAdapter):
 
     @property
     def port(self):
+        """Return the port for commuicating with rabbitmq
+
+        :returns: int port number
+        """
         return self.ssl_port or 5672
 
 
@@ -109,9 +152,7 @@ class DRAgentCharm(charms_openstack.charm.OpenStackCharm):
     name = 'neutron-dynamic-routing'
     packages = PACKAGES
     default_service = 'neutron-bgp-dragent'
-    services = ['neutron-bgp-dragent']
-
-    # Note that the hsm interface is optional - defined in config.yaml
+    services = [default_service]
     required_relations = ['amqp']
 
     adapters_class = os_adapters.OpenStackRelationAdapters
@@ -137,28 +178,19 @@ class DRAgentCharm(charms_openstack.charm.OpenStackCharm):
     }
 
     def install(self):
+        """Configure openstack-origin and install packages
+
+        :returns: None
+        """
+
         self.configure_source()
         super().install()
 
-    def get_amqp_credentials(self):
-        """Provide the default amqp username and vhost as a tuple.
+    def do_openstack_upgrade_db_migration(self, *args):
+        """Override the default do_openstack_upgrade_db_migration function.
+        DRAgentCharm has no database to migrate.
 
-        :returns (username, host): two strings to send to the amqp provider.
+        :returns: None
         """
-        return (self.config['rabbit-user'], self.config['rabbit-vhost'])
 
-    def states_to_check(self, required_relations=None):
-        """Override the default states_to_check() for the assess_status
-        functionality so that, if we have to have an HSM relation, then enforce
-        it on the assess_status() call.
-
-        If param required_relations is not None then it overrides the
-        instance/class variable self.required_relations.
-
-        :param required_relations: [list of state names]
-        :returns: [states{} as per parent method]
-        """
-        if required_relations is None:
-            required_relations = self.required_relations
-        return super(DRAgentCharm, self).states_to_check(
-            required_relations=required_relations)
+        pass

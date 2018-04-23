@@ -22,7 +22,7 @@ import charms_openstack.charm as charm
 
 # This charm's library contains all of the handler code associated with
 # dragent -- we need to import it to get the definitions for the charm.
-import charm.openstack.dragent as dragent  # noqa
+import charm.openstack.dragent as dragent
 
 
 # Use the charms.openstack defaults for common states and hooks
@@ -30,23 +30,18 @@ charm.use_defaults(
     'charm.installed',
     'amqp.connected',
     'config.changed',
-    'update-status')
+    'update-status',
+    'upgrade-charm')
 
 
-@reactive.when('charm.installed')
-def debug():
-    if not hookenv.config('debug'):
-        return
-    for key, value in reactive.get_states().items():
-        print(key, value)
-
-
-# Use for testing with the quagga charm
-@reactive.when('endpoint.bgp-speaker.joined')
+@reactive.when('endpoint.bgp-speaker.changed')
 def publish_bgp_info(endpoint):
+    """Publish BGP information about this unit to interface-bgp peers
+    """
     endpoint.publish_info(asn=hookenv.config('asn'),
                           passive=True,
                           bindings=dragent.bgp_speaker_bindings())
+    dragent.assess_status()
 
 
 @reactive.when('amqp.connected')
@@ -60,10 +55,10 @@ def setup_amqp_req(amqp):
 
 
 @reactive.when('amqp.available')
-def render_stuff(*args):
-    """Render the configuration for dyanmic routing when all the interfaces are
+def render_configs(*args):
+    """Render the configuration for dynamic routing when all the interfaces are
     available.
     """
-    hookenv.log("about to call the render_configs with {}".format(args))
+    dragent.upgrade_if_available(args)
     dragent.render_configs(args)
     dragent.assess_status()
