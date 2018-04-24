@@ -124,7 +124,10 @@ class TransportURLAdapter(os_adapters.RabbitMQRelationAdapter):
 
         :returns: string transport URL
         """
-        hosts = self.hosts or [self.host]
+        if self.hosts:
+            hosts = self.hosts.split(',')
+        else:
+            hosts = [self.host]
         if hosts:
             transport_url_hosts = ','.join([
                 "{}:{}@{}:{}".format(self.username,
