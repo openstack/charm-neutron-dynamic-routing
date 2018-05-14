@@ -28,7 +28,6 @@ applications:
   neutron-dynamic-routing:
     charm: ../../../neutron-dynamic-routing
     num_units: 1
-    options: {asn: 12345}
     series: bionic
   rabbitmq-server:
     charm: cs:~openstack-charmers-next/bionic/rabbitmq-server
@@ -38,6 +37,5 @@ applications:
   quagga:
     charm: cs:~openstack-charmers-next/bionic/quagga
     num_units: 1
-    options: {asn: 10000}
     series: bionic
 

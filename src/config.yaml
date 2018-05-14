@@ -1,9 +1,0 @@
-options:
-  asn:
-    default:
-    type: int
-    description: |
-      BGP Autonomous System Number for the OpenStack networks being advertised.
-      This setting is primarily used for testing. In production use ASNs are
-      configured post-deployment via the OpenStack client when creating bgp
-      speakers.

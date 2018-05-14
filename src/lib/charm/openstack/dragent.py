@@ -87,6 +87,17 @@ def bgp_speaker_bindings():
     return [SPEAKER_BINDING]
 
 
+def get_os_codename():
+    """Return OpenStack Codename for installed application
+
+    :returns: OpenStack Codename
+    :rtype: str
+    """
+    return DRAgentCharm.singleton.get_os_codename_package(
+        DRAgentCharm.singleton.release_pkg,
+        DRAgentCharm.singleton.package_codenames)
+
+
 @os_adapters.config_property
 def provider_ip(cls):
     """Return the provider binding network IP

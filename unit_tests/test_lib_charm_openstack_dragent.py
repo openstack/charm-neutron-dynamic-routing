@@ -44,6 +44,14 @@ class TestOpenStackDRAgent(Helper):
         self.assertEqual(dragent.bgp_speaker_bindings(),
                          [self.SPEAKER_BINDING])
 
+    def get_os_codename(self):
+        self.patch_object(dragent.DRAgentCharm.singleton,
+                          "get_os_codename_package")
+        dragent.get_os_codename()
+        self.get_os_codename_package.assert_called_once_with(
+            dragent.DRAgentCharm.singleton.release_pkg,
+            dragent.DRAgentCharm.singleton.package_codenames)
+
     def test_speaker_ip(self):
         _ip = "10.0.0.10"
         self.patch_object(dragent.ch_ip, "get_relation_ip")

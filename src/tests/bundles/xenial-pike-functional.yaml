@@ -30,7 +30,7 @@ applications:
   neutron-dynamic-routing:
     charm: ../../../neutron-dynamic-routing
     num_units: 1
-    options: {asn: 12345, openstack-origin: 'cloud:xenial-pike/proposed'}
+    options: {openstack-origin: 'cloud:xenial-pike/proposed'}
     series: xenial
   rabbitmq-server:
     charm: cs:~openstack-charmers-next/xenial/rabbitmq-server
@@ -41,6 +41,6 @@ applications:
   quagga:
     charm: cs:~openstack-charmers-next/xenial/quagga
     num_units: 1
-    options: {asn: 10000}
+    options: {use-16bit-asn: True}
     series: xenial
 

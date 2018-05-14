@@ -16,7 +16,6 @@
 from __future__ import absolute_import
 
 import charms.reactive as reactive
-import charmhelpers.core.hookenv as hookenv
 
 import charms_openstack.charm as charm
 
@@ -38,9 +37,13 @@ charm.use_defaults(
 def publish_bgp_info(endpoint):
     """Publish BGP information about this unit to interface-bgp peers
     """
-    endpoint.publish_info(asn=hookenv.config('asn'),
-                          passive=True,
-                          bindings=dragent.bgp_speaker_bindings())
+    if dragent.get_os_codename() == 'pike':
+        use_16bit_asn = True
+    else:
+        use_16bit_asn = False
+    endpoint.publish_info(passive=True,
+                          bindings=dragent.bgp_speaker_bindings(),
+                          use_16bit_asn=use_16bit_asn)
     dragent.assess_status()
 
 
