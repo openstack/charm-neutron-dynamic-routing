@@ -85,8 +85,8 @@ class TestTransportURLAdapter(Helper):
         self.assertEqual(tua.transport_url, _expected)
 
     def test_port(self):
-        _ssl_port = 2765
-        _port = 5672
+        _ssl_port = '2765'
+        _port = '5672'
         amqp = mock.MagicMock()
         tua = dragent.TransportURLAdapter(amqp)
         # Default Port

@@ -118,6 +118,11 @@ class TransportURLAdapter(os_adapters.RabbitMQRelationAdapter):
     TODO: Move to charms.openstack.adapters
     """
 
+    DEFAULT_PORT = '5672'
+
+    def __init__(self, relation):
+        super(TransportURLAdapter, self).__init__(relation)
+
     @property
     def transport_url(self):
         """Return the transport URL for communicating with rabbitmq
@@ -143,7 +148,17 @@ class TransportURLAdapter(os_adapters.RabbitMQRelationAdapter):
 
         :returns: int port number
         """
-        return self.ssl_port or 5672
+        return self.ssl_port or self.DEFAULT_PORT
+
+
+class DRAgentRelationAdapters(os_adapters.OpenStackRelationAdapters):
+
+    """
+    Adapters collection to append specific adapters for Neutron Dynamic Routing
+    """
+    relation_adapters = {
+        'amqp': TransportURLAdapter,
+    }
 
 
 class DRAgentCharm(charms_openstack.charm.OpenStackCharm):
@@ -157,11 +172,7 @@ class DRAgentCharm(charms_openstack.charm.OpenStackCharm):
     default_service = 'neutron-bgp-dragent'
     services = [default_service]
     required_relations = ['amqp']
-
-    adapters_class = os_adapters.OpenStackRelationAdapters
-    adapters_class.relation_adapters = {
-        'amqp': TransportURLAdapter,
-    }
+    adapters_class = DRAgentRelationAdapters
 
     restart_map = {
         NEUTRON_CONF: services,
