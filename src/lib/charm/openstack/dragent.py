@@ -193,7 +193,7 @@ class DRAgentCharm(charms_openstack.charm.OpenStackCharm):
     # Package for release version detection
     release_pkg = 'neutron-dynamic-routing-common'
 
-    # Package codename map for barbican-common
+    # Package codename map for neutron-dynamic-routing-common
     package_codenames = {
         'neutron-dynamic-routing-common': collections.OrderedDict([
             ('11', 'pike'),

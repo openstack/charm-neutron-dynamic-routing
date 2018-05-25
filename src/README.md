@@ -7,9 +7,9 @@ This charm provides the BGP speaker, dynamic routing agent, feature for OpenStac
 Neutron dynamic routing relies on services from the rabbitmq-server charm and assumes a functioning neutron stack:
 
     # The neutron-dynamic-routing charm only requires a relationship to rabbitmq-server
-    juju deploy neutron-dyanmic-routing
+    juju deploy neutron-dynamic-routing
     juju deploy rabbitmq-server
-    juju add-relation neutron-dyanmic-routing rabbitmq-server
+    juju add-relation neutron-dynamic-routing rabbitmq-server
 
     # For minimum functionality a full neutron stack is required:
     juju deploy keystone
@@ -17,6 +17,11 @@ Neutron dynamic routing relies on services from the rabbitmq-server charm and as
     juju deploy percona-cluster
     juju add-relation keystone percona-cluster
     juju add-relation keystone neutron-api
+    juju add-relation neutron-api percona-cluster
+    juju add-relation neutron-api rabbitmq-server
+
+NOTE: This charm supports OpenStack versions Pike or newer.  Specify version
+      to install using the openstack-origin and source configuration options.
 
 # Feature Usage
 
