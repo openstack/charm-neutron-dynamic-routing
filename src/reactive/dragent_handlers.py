@@ -52,7 +52,7 @@ def setup_amqp_req(amqp):
     """Use the amqp interface to request access to the amqp broker using our
     local configuration.
     """
-    amqp.request_access(username='dragent',
+    amqp.request_access(username='neutron',
                         vhost='openstack')
     dragent.assess_status()
 

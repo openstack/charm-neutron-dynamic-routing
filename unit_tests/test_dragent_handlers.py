@@ -150,7 +150,7 @@ class TestDRAgentHandlers(unittest.TestCase):
         amqp = mock.MagicMock()
         handlers.setup_amqp_req(amqp)
         amqp.request_access.assert_called_once_with(
-            username='dragent', vhost='openstack')
+            username='neutron', vhost='openstack')
 
     def test_render_configs(self):
         self.patch(handlers.dragent, 'render_configs')
