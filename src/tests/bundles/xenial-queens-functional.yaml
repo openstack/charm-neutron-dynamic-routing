@@ -22,14 +22,12 @@ applications:
     charm: cs:~openstack-charmers-next/xenial/neutron-api
     constraints: mem=1G
     num_units: 1
-    options: {dns-domain: mojo.serverstack., enable-ml2-dns: true, flat-network-providers: physnet1,
-      ipv4-ptr-zone-prefix-size: 24, neutron-security-groups: true, openstack-origin: 'cloud:xenial-queens',
-      reverse-dns-lookup: true}
+    options: {flat-network-providers: physnet1, neutron-security-groups: true, openstack-origin: 'cloud:xenial-queens'}
     series: xenial
   neutron-dynamic-routing:
     charm: ../../../neutron-dynamic-routing
     num_units: 1
-    options: {openstack-origin: 'cloud:xenial-queens/proposed'}
+    options: {openstack-origin: 'cloud:xenial-queens'}
     series: xenial
   rabbitmq-server:
     charm: cs:~openstack-charmers-next/xenial/rabbitmq-server
