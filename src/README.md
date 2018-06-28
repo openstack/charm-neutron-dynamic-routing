@@ -20,7 +20,7 @@ Neutron dynamic routing relies on services from the rabbitmq-server charm and as
     juju add-relation neutron-api percona-cluster
     juju add-relation neutron-api rabbitmq-server
 
-NOTE: This charm supports OpenStack versions Pike or newer.  Specify version
+NOTE: This charm supports OpenStack versions Ocata or newer.  Specify version
       to install using the openstack-origin and source configuration options.
 
 # Feature Usage

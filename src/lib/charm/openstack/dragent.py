@@ -177,7 +177,7 @@ class DRAgentCharm(charms_openstack.charm.OpenStackCharm):
     functionality to manage a dragent unit.
     """
 
-    release = 'pike'
+    release = 'ocata'
     name = 'neutron-dynamic-routing'
     packages = PACKAGES
     default_service = 'neutron-bgp-dragent'
@@ -196,6 +196,7 @@ class DRAgentCharm(charms_openstack.charm.OpenStackCharm):
     # Package codename map for neutron-dynamic-routing-common
     package_codenames = {
         'neutron-dynamic-routing-common': collections.OrderedDict([
+            ('10', 'ocata'),
             ('11', 'pike'),
             ('12', 'queens'),
             ('13', 'rocky'),

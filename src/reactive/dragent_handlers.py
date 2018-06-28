@@ -37,7 +37,7 @@ charm.use_defaults(
 def publish_bgp_info(endpoint):
     """Publish BGP information about this unit to interface-bgp peers
     """
-    if dragent.get_os_codename() == 'pike':
+    if dragent.get_os_codename() in ['ocata', 'pike']:
         use_16bit_asn = True
     else:
         use_16bit_asn = False
