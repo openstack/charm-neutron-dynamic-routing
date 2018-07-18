@@ -184,6 +184,7 @@ class DRAgentCharm(charms_openstack.charm.OpenStackCharm):
     services = [default_service]
     required_relations = ['amqp']
     adapters_class = DRAgentRelationAdapters
+    group = 'neutron'
 
     restart_map = {
         NEUTRON_CONF: services,
