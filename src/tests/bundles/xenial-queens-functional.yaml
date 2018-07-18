@@ -10,7 +10,14 @@ applications:
     charm: cs:~openstack-charmers-next/xenial/keystone
     constraints: mem=1G
     num_units: 1
-    options: {admin-password: openstack, admin-token: ubuntutesting, openstack-origin: 'cloud:xenial-queens'}
+    options:
+        admin-password: openstack
+        admin-token: ubuntutesting
+        openstack-origin: 'cloud:xenial-queens'
+        haproxy-server-timeout: 90000
+        haproxy-client-timeout: 90000
+        haproxy-queue-timeout: 9000
+        haproxy-connect-timeout: 9000
     series: xenial
   mysql:
     charm: cs:~openstack-charmers-next/xenial/percona-cluster
@@ -22,7 +29,14 @@ applications:
     charm: cs:~openstack-charmers-next/xenial/neutron-api
     constraints: mem=1G
     num_units: 1
-    options: {flat-network-providers: physnet1, neutron-security-groups: true, openstack-origin: 'cloud:xenial-queens'}
+    options:
+        flat-network-providers: physnet1,
+        neutron-security-groups: true
+        openstack-origin: 'cloud:xenial-queens'
+        haproxy-server-timeout: 90000
+        haproxy-client-timeout: 90000
+        haproxy-queue-timeout: 9000
+        haproxy-connect-timeout: 9000
     series: xenial
   neutron-dynamic-routing:
     charm: ../../../neutron-dynamic-routing
@@ -39,4 +53,3 @@ applications:
     charm: cs:~openstack-charmers-next/xenial/quagga
     num_units: 1
     series: xenial
-

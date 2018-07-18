@@ -1,4 +1,4 @@
-series: bionic
+series: xenial
 relations:
 - [neutron-dynamic-routing, rabbitmq-server]
 - [neutron-dynamic-routing, quagga]
@@ -8,45 +8,51 @@ relations:
 - [neutron-api, keystone]
 applications:
   keystone:
-    charm: cs:~openstack-charmers-next/bionic/keystone
+    charm: cs:~openstack-charmers-next/xenial/keystone
     constraints: mem=1G
     num_units: 1
     options:
         admin-password: openstack
         admin-token: ubuntutesting
+        openstack-origin: 'cloud:xenial-ocata'
         haproxy-server-timeout: 90000
         haproxy-client-timeout: 90000
         haproxy-queue-timeout: 9000
         haproxy-connect-timeout: 9000
-    series: bionic
+    series: xenial
   mysql:
-    charm: cs:~openstack-charmers-next/bionic/percona-cluster
+    charm: cs:~openstack-charmers-next/xenial/percona-cluster
     constraints: mem=4G
     num_units: 1
-    series: bionic
+    options: {source: 'cloud:xenial-ocata'}
+    series: xenial
   neutron-api:
-    charm: cs:~openstack-charmers-next/bionic/neutron-api
+    charm: cs:~openstack-charmers-next/xenial/neutron-api
     constraints: mem=1G
     num_units: 1
     options:
         flat-network-providers: physnet1
         neutron-security-groups: true
+        openstack-origin: 'cloud:xenial-ocata'
         haproxy-server-timeout: 90000
         haproxy-client-timeout: 90000
         haproxy-queue-timeout: 9000
         haproxy-connect-timeout: 9000
-    series: bionic
+    series: xenial
   neutron-dynamic-routing:
     charm: ../../../neutron-dynamic-routing
     num_units: 1
-    series: bionic
+    options: {openstack-origin: 'cloud:xenial-ocata'}
+    series: xenial
   rabbitmq-server:
-    charm: cs:~openstack-charmers-next/bionic/rabbitmq-server
+    charm: cs:~openstack-charmers-next/xenial/rabbitmq-server
     constraints: mem=1G
     num_units: 1
-    series: bionic
+    options: {source: 'cloud:xenial-ocata'}
+    series: xenial
   quagga:
-    charm: cs:~openstack-charmers-next/bionic/quagga
+    charm: cs:~openstack-charmers-next/xenial/quagga
     num_units: 1
-    series: bionic
+    options: {use-16bit-asn: True}
+    series: xenial
 
