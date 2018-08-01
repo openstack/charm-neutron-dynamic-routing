@@ -12,8 +12,6 @@ applications:
     constraints: mem=1G
     num_units: 1
     options:
-        admin-password: openstack
-        admin-token: ubuntutesting
         openstack-origin: 'cloud:xenial-ocata'
         haproxy-server-timeout: 90000
         haproxy-client-timeout: 90000

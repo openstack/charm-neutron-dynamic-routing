@@ -10,7 +10,7 @@ applications:
     charm: cs:~openstack-charmers-next/bionic/keystone
     constraints: mem=1G
     num_units: 1
-    options: {admin-password: openstack, admin-token: ubuntutesting, openstack-origin: 'cloud:bionic-rocky'}
+    options: {openstack-origin: 'cloud:bionic-rocky'}
     series: bionic
   mysql:
     charm: cs:~openstack-charmers-next/bionic/percona-cluster
