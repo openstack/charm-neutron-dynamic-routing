@@ -27,7 +27,6 @@ import charm.openstack.dragent as dragent
 # Use the charms.openstack defaults for common states and hooks
 charm.use_defaults(
     'charm.installed',
-    'amqp.connected',
     'config.changed',
     'update-status',
     'upgrade-charm')
