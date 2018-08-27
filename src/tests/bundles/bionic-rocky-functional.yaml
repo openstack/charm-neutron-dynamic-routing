@@ -10,7 +10,12 @@ applications:
     charm: cs:~openstack-charmers-next/bionic/keystone
     constraints: mem=1G
     num_units: 1
-    options: {openstack-origin: 'cloud:bionic-rocky'}
+    options:
+        openstack-origin: 'cloud:bionic-rocky'
+        haproxy-server-timeout: 90000
+        haproxy-client-timeout: 90000
+        haproxy-queue-timeout: 9000
+        haproxy-connect-timeout: 9000
     series: bionic
   mysql:
     charm: cs:~openstack-charmers-next/bionic/percona-cluster
@@ -22,7 +27,14 @@ applications:
     charm: cs:~openstack-charmers-next/bionic/neutron-api
     constraints: mem=1G
     num_units: 1
-    options: {flat-network-providers: physnet1, neutron-security-groups: true, openstack-origin: 'cloud:bionic-rocky'}
+    options:
+        flat-network-providers: physnet1,
+        neutron-security-groups: true
+        openstack-origin: 'cloud:bionic-rocky'
+        haproxy-server-timeout: 90000
+        haproxy-client-timeout: 90000
+        haproxy-queue-timeout: 9000
+        haproxy-connect-timeout: 9000
     series: bionic
   neutron-dynamic-routing:
     charm: ../../../neutron-dynamic-routing
@@ -39,4 +51,3 @@ applications:
     charm: cs:~openstack-charmers-next/bionic/quagga
     num_units: 1
     series: bionic
-
