@@ -24,8 +24,18 @@ import charmhelpers.contrib.network.ip as ch_ip
 import charms_openstack.charm
 import charms_openstack.adapters as os_adapters
 
-PACKAGES = ['neutron-bgp-dragent', 'neutron-dynamic-routing-common',
-            'python-neutron-dynamic-routing']
+PACKAGES = [
+    'neutron-bgp-dragent',
+    'neutron-dynamic-routing-common',
+    'python-neutron-dynamic-routing',
+]
+
+PY3_PACKAGES = [
+    'neutron-bgp-dragent',
+    'neutron-dynamic-routing-common',
+    'python3-neutron-dynamic-routing',
+]
+
 NEUTRON_DIR = '/etc/neutron/'
 NEUTRON_CONF = NEUTRON_DIR + "neutron.conf"
 DRAGENT_CONF = NEUTRON_DIR + "bgp_dragent.ini"
@@ -221,3 +231,17 @@ class DRAgentCharm(charms_openstack.charm.OpenStackCharm):
         """
 
         pass
+
+
+class RockyDRAgentCharm(DRAgentCharm):
+
+    release = 'rocky'
+
+    packages = PY3_PACKAGES
+
+    purge_packages = [
+        'python-neutron-dynamic-routing',
+        'python-memcache',
+    ]
+
+    python_version = 3

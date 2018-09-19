@@ -9,6 +9,6 @@ gate_bundles:
 - xenial-pike-functional
 - xenial-queens-functional
 smoke_bundles:
-- bionic-queens-functional
+- bionic-rocky-functional
 tests:
 - zaza.charm_tests.dragent.tests.DRAgentTest
