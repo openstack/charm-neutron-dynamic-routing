@@ -78,6 +78,14 @@ def assess_status():
     DRAgentCharm.singleton.assess_status()
 
 
+def configure_ssl():
+    """Setup SSL communications calling DRAgentCharm.singleton.configure_ssl()
+
+    :returns: None
+    """
+    DRAgentCharm.singleton.configure_ssl()
+
+
 def upgrade_if_available(interfaces_list):
     """Just call the DRAgentCharm.singleton.upgrade_if_available() command to
     update OpenStack package if upgrade is available

@@ -105,6 +105,7 @@ class TestDRAgentHandlers(unittest.TestCase):
             'publish_bgp_info': ('endpoint.bgp-speaker.changed',),
             'setup_amqp_req': ('amqp.connected', ),
             'render_configs': ('amqp.available', ),
+            'configure_ssl': ('amqp.available.ssl', ),
         }
         when_not_patterns = {}
         # check the when hooks are attached to the expected functions

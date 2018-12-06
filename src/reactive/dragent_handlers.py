@@ -56,6 +56,11 @@ def setup_amqp_req(amqp):
     dragent.assess_status()
 
 
+@reactive.when('amqp.available.ssl')
+def configure_ssl(amqp):
+    dragent.configure_ssl()
+
+
 @reactive.when('amqp.available')
 def render_configs(*args):
     """Render the configuration for dynamic routing when all the interfaces are
