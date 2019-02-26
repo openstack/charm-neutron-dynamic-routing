@@ -142,51 +142,13 @@ def speaker_ip(cls):
     return ch_ip.get_relation_ip(SPEAKER_BINDING)
 
 
-class TransportURLAdapter(os_adapters.RabbitMQRelationAdapter):
-    """Add Transport URL to RabbitMQRelationAdapter
-    TODO: Move to charms.openstack.adapters
-    """
-
-    DEFAULT_PORT = '5672'
-
-    def __init__(self, relation):
-        super(TransportURLAdapter, self).__init__(relation)
-
-    @property
-    def transport_url(self):
-        """Return the transport URL for communicating with rabbitmq
-
-        :returns: string transport URL
-        """
-        if self.hosts:
-            hosts = self.hosts.split(',')
-        else:
-            hosts = [self.host]
-        if hosts:
-            transport_url_hosts = ','.join([
-                "{}:{}@{}:{}".format(self.username,
-                                     self.password,
-                                     host_,
-                                     self.port)
-                for host_ in hosts])
-            return "rabbit://{}/{}".format(transport_url_hosts, self.vhost)
-
-    @property
-    def port(self):
-        """Return the port for commuicating with rabbitmq
-
-        :returns: int port number
-        """
-        return self.ssl_port or self.DEFAULT_PORT
-
-
 class DRAgentRelationAdapters(os_adapters.OpenStackRelationAdapters):
 
     """
     Adapters collection to append specific adapters for Neutron Dynamic Routing
     """
     relation_adapters = {
-        'amqp': TransportURLAdapter,
+        'amqp': os_adapters.RabbitMQRelationAdapter,
     }
 
 

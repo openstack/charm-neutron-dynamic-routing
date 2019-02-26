@@ -15,8 +15,6 @@
 from __future__ import absolute_import
 from __future__ import print_function
 
-import mock
-
 import charm.openstack.dragent as dragent
 
 import charms_openstack.test_utils as test_utils
@@ -67,42 +65,6 @@ class TestOpenStackDRAgent(Helper):
         dra = dragent.DRAgentCharm()
         self.assertEqual(dragent.provider_ip(dra), _ip)
         self.get_relation_ip.assert_called_once_with(self.PROVIDER_BINDING)
-
-
-class TestTransportURLAdapter(Helper):
-
-    def test_transport_url(self):
-        _expected = "rabbit://user:pass@10.0.0.50:5672/vhost"
-        amqp = mock.MagicMock()
-        amqp.relation_name = "amqp"
-        amqp.username.return_value = "user"
-        amqp.vhost.return_value = "vhost"
-        tua = dragent.TransportURLAdapter(amqp)
-        tua.vip = None
-        tua.password = "pass"
-        tua.ssl_port = None
-
-        # Single
-        tua.private_address = "10.0.0.50"
-        self.assertEqual(tua.transport_url, _expected)
-
-        # Multiple
-        _expected = ("rabbit://user:pass@10.200.0.20:5672,"
-                     "user:pass@10.200.0.30:5672/vhost")
-        amqp.rabbitmq_hosts.return_value = ["10.200.0.20", "10.200.0.30"]
-        self.assertEqual(tua.transport_url, _expected)
-
-    def test_port(self):
-        _ssl_port = '2765'
-        _port = '5672'
-        amqp = mock.MagicMock()
-        tua = dragent.TransportURLAdapter(amqp)
-        # Default Port
-        tua.ssl_port = None
-        self.assertEqual(tua.port, _port)
-        # SSL port
-        tua.ssl_port = _ssl_port
-        self.assertEqual(tua.port, _ssl_port)
 
 
 class TestDRAgentCharm(Helper):
