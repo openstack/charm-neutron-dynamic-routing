@@ -10,6 +10,7 @@ series:
   - xenial
   - bionic
   - cosmic
+  - disco
 subordinate: false
 extra-bindings:
   # Used to specify the OpenStack provider network interface
