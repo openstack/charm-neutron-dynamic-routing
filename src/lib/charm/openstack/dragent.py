@@ -181,6 +181,7 @@ class DRAgentCharm(charms_openstack.charm.OpenStackCharm):
             ('11', 'pike'),
             ('12', 'queens'),
             ('13', 'rocky'),
+            ('14', 'stein'),
         ]),
     }
 

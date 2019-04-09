@@ -3,7 +3,9 @@ configure:
 - zaza.charm_tests.dragent.configure.setup
 dev_bundles:
 - cosmic-rocky-functional
+- disco-stein-functional
 gate_bundles:
+- bionic-stein-functional
 - bionic-rocky-functional
 - bionic-queens-functional
 - xenial-pike-functional
