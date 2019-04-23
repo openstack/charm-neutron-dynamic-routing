@@ -1,2 +1,2 @@
 # zaza
-git+https://github.com/openstack-charmers/zaza.git#egg=zaza
+git+https://github.com/openstack-charmers/zaza.git@namespace-tests#egg=zaza
