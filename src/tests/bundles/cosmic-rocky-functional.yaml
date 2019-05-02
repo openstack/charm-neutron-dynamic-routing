@@ -44,7 +44,7 @@ applications:
     num_units: 1
     series: cosmic
   quagga:
-    charm: cs:bionic/quagga
+    charm: cs:~openstack-charmers-next/quagga
     num_units: 1
     series: cosmic
 

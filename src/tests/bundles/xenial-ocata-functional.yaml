@@ -49,7 +49,7 @@ applications:
     options: {source: 'cloud:xenial-ocata'}
     series: xenial
   quagga:
-    charm: cs:xenial/quagga
+    charm: cs:~openstack-charmers-next/quagga
     num_units: 1
     options: {use-16bit-asn: True}
     series: xenial
