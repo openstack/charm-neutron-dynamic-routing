@@ -2,7 +2,6 @@ charm_name: neutron-dynamic-routing
 configure:
 - zaza.openstack.charm_tests.dragent.configure.setup
 dev_bundles:
-- cosmic-rocky-functional
 - disco-stein-functional
 gate_bundles:
 - bionic-stein-functional
@@ -11,6 +10,6 @@ gate_bundles:
 - xenial-pike-functional
 - xenial-queens-functional
 smoke_bundles:
-- bionic-rocky-functional
+- bionic-stein-functional
 tests:
 - zaza.openstack.charm_tests.dragent.tests.DRAgentTest
