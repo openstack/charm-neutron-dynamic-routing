@@ -51,71 +51,6 @@ PROVIDER_BINDING = 'provider'
 charms_openstack.charm.use_defaults('charm.default-select-release')
 
 
-def render_configs(interfaces_list):
-    """Using a list of interfaces, render the configs and, if they have
-    changes, restart the services on the unit.
-
-    :returns: None
-    """
-
-    try:
-        [i for i in interfaces_list]
-    except TypeError:
-        interfaces_list = [interfaces_list]
-    # TODO: Add bgp-speaker as an optional interface.
-    # Currently, charms.openstack does not understand endpoints and will need
-    # to be updated for this functionality.
-    DRAgentCharm.singleton.render_with_interfaces(interfaces_list)
-
-
-def assess_status():
-    """Just call the DRAgentCharm.singleton.assess_status() command to update
-    status on the unit.
-
-    :returns: None
-    """
-
-    DRAgentCharm.singleton.assess_status()
-
-
-def configure_ssl():
-    """Setup SSL communications calling DRAgentCharm.singleton.configure_ssl()
-
-    :returns: None
-    """
-    DRAgentCharm.singleton.configure_ssl()
-
-
-def upgrade_if_available(interfaces_list):
-    """Just call the DRAgentCharm.singleton.upgrade_if_available() command to
-    update OpenStack package if upgrade is available
-
-    @returns: None
-    """
-
-    DRAgentCharm.singleton.upgrade_if_available(interfaces_list)
-
-
-def bgp_speaker_bindings():
-    """Return BGP speaker bindings for the bgp interface
-
-    :returns: list of bindings
-    """
-
-    return [SPEAKER_BINDING]
-
-
-def get_os_codename():
-    """Return OpenStack Codename for installed application
-
-    :returns: OpenStack Codename
-    :rtype: str
-    """
-    return DRAgentCharm.singleton.get_os_codename_package(
-        DRAgentCharm.singleton.release_pkg,
-        DRAgentCharm.singleton.package_codenames)
-
-
 @os_adapters.config_property
 def provider_ip(cls):
     """Return the provider binding network IP
@@ -202,6 +137,23 @@ class DRAgentCharm(charms_openstack.charm.OpenStackCharm):
         """
 
         pass
+
+    def bgp_speaker_bindings(self):
+        """Return BGP speaker bindings for the bgp interface
+
+        :returns: list of bindings
+        """
+        return [SPEAKER_BINDING]
+
+    def get_os_codename(self):
+        """Return OpenStack Codename for installed application
+
+        :returns: OpenStack Codename
+        :rtype: str
+        """
+        return self.get_os_codename_package(
+            self.release_pkg,
+            self.package_codenames)
 
 
 class RockyDRAgentCharm(DRAgentCharm):

@@ -31,17 +31,6 @@ class Helper(test_utils.PatchHelper):
 
 class TestOpenStackDRAgent(Helper):
 
-    def test_render_configs(self):
-        self.patch_object(dragent.DRAgentCharm.singleton,
-                          "render_with_interfaces")
-        dragent.render_configs("interfaces-list")
-        self.render_with_interfaces.assert_called_once_with(
-            "interfaces-list")
-
-    def test_bgp_speaker_bindings(self):
-        self.assertEqual(dragent.bgp_speaker_bindings(),
-                         [self.SPEAKER_BINDING])
-
     def get_os_codename(self):
         self.patch_object(dragent.DRAgentCharm.singleton,
                           "get_os_codename_package")
@@ -78,3 +67,8 @@ class TestDRAgentCharm(Helper):
         dra.install()
         self.configure_source.assert_called_once_with()
         self.install.assert_called_once_with()
+
+    def test_bgp_speaker_bindings(self):
+        dra = dragent.DRAgentCharm()
+        self.assertEqual(dra.bgp_speaker_bindings(),
+                         [dragent.SPEAKER_BINDING])

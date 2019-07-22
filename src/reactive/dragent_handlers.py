@@ -17,12 +17,11 @@ from __future__ import absolute_import
 
 import charms.reactive as reactive
 
+import charms_openstack.bus
 import charms_openstack.charm as charm
 
-# This charm's library contains all of the handler code associated with
-# dragent -- we need to import it to get the definitions for the charm.
-import charm.openstack.dragent as dragent
 
+charms_openstack.bus.discover()
 
 # Use the charms.openstack defaults for common states and hooks
 charm.use_defaults(
@@ -36,14 +35,15 @@ charm.use_defaults(
 def publish_bgp_info(endpoint):
     """Publish BGP information about this unit to interface-bgp peers
     """
-    if dragent.get_os_codename() in ['ocata', 'pike']:
-        use_16bit_asn = True
-    else:
-        use_16bit_asn = False
-    endpoint.publish_info(passive=True,
-                          bindings=dragent.bgp_speaker_bindings(),
-                          use_16bit_asn=use_16bit_asn)
-    dragent.assess_status()
+    with charm.provide_charm_instance() as instance:
+        if instance.get_os_codename() in ['ocata', 'pike']:
+            use_16bit_asn = True
+        else:
+            use_16bit_asn = False
+        endpoint.publish_info(passive=True,
+                              bindings=instance.bgp_speaker_bindings(),
+                              use_16bit_asn=use_16bit_asn)
+        instance.assess_status()
 
 
 @reactive.when('amqp.connected')
@@ -53,12 +53,14 @@ def setup_amqp_req(amqp):
     """
     amqp.request_access(username='neutron',
                         vhost='openstack')
-    dragent.assess_status()
+    with charm.provide_charm_instance() as instance:
+        instance.assess_status()
 
 
 @reactive.when('amqp.available.ssl')
 def configure_ssl(amqp):
-    dragent.configure_ssl()
+    with charm.provide_charm_instance() as instance:
+        instance.configure_ssl()
 
 
 @reactive.when('amqp.available')
@@ -66,6 +68,7 @@ def render_configs(*args):
     """Render the configuration for dynamic routing when all the interfaces are
     available.
     """
-    dragent.upgrade_if_available(args)
-    dragent.render_configs(args)
-    dragent.assess_status()
+    with charm.provide_charm_instance() as instance:
+        instance.upgrade_if_available(args)
+        instance.render_with_interfaces(args)
+        instance.assess_status()
