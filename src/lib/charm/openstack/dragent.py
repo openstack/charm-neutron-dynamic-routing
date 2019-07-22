@@ -19,6 +19,7 @@ from __future__ import absolute_import
 
 import collections
 
+import charmhelpers.core as ch_core
 import charmhelpers.contrib.network.ip as ch_ip
 
 import charms_openstack.charm
@@ -154,6 +155,18 @@ class DRAgentCharm(charms_openstack.charm.OpenStackCharm):
         return self.get_os_codename_package(
             self.release_pkg,
             self.package_codenames)
+
+    def disable_services(self):
+        """Disble services, typically used awaiting required relations."""
+        for service in self.services:
+            ch_core.host.service('disable', service)
+            ch_core.host.service('stop', service)
+
+    def enable_services(self):
+        """Enable services, typically used when required relations complete."""
+        for service in self.services:
+            ch_core.host.service('enable', service)
+            ch_core.host.service('start', service)
 
 
 class RockyDRAgentCharm(DRAgentCharm):

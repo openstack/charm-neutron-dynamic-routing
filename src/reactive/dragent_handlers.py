@@ -63,6 +63,21 @@ def configure_ssl(amqp):
         instance.configure_ssl()
 
 
+@reactive.when('charm.installed')
+@reactive.when_not('config.rendered')
+def disable_services():
+    with charm.provide_charm_instance() as instance:
+        instance.disable_services()
+        instance.assess_status()
+
+
+@reactive.when('config.rendered')
+def enable_services():
+    with charm.provide_charm_instance() as instance:
+        instance.enable_services()
+        instance.assess_status()
+
+
 @reactive.when('amqp.available')
 def render_configs(*args):
     """Render the configuration for dynamic routing when all the interfaces are
@@ -71,4 +86,5 @@ def render_configs(*args):
     with charm.provide_charm_instance() as instance:
         instance.upgrade_if_available(args)
         instance.render_with_interfaces(args)
+        reactive.set_flag('config.rendered')
         instance.assess_status()

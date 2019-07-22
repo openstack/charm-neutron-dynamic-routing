@@ -40,6 +40,11 @@ class TestDRAgentHooks(test_utils.TestRegisteredHooks):
                 'setup_amqp_req': ('amqp.connected', ),
                 'render_configs': ('amqp.available', ),
                 'configure_ssl': ('amqp.available.ssl', ),
+                'enable_services': ('config.rendered',),
+                'disable_services': ('charm.installed',),
+            },
+            'when_not': {
+                'disable_services': ('config.rendered',),
             },
         }
         self.registered_hooks_test_helper(handlers, hook_set, defaults)
@@ -92,4 +97,5 @@ class TestDRAgentHandlers(test_utils.PatchHelper):
             (amqp,))
         self.dragent_charm.render_with_interfaces.assert_called_once_with(
             (amqp,))
+        self.set_flag.assert_called_once_with('config.rendered')
         self.dragent_charm.assess_status.assert_called_once()
