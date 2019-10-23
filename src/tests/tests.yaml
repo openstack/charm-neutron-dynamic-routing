@@ -4,12 +4,13 @@ configure:
 dev_bundles:
 - disco-stein-functional
 gate_bundles:
+- bionic-train-functional
 - bionic-stein-functional
 - bionic-rocky-functional
 - bionic-queens-functional
 - xenial-pike-functional
 - xenial-queens-functional
 smoke_bundles:
-- bionic-stein-functional
+- bionic-train-functional
 tests:
 - zaza.openstack.charm_tests.dragent.tests.DRAgentTest
