@@ -17,6 +17,8 @@ from __future__ import absolute_import
 
 import charms.reactive as reactive
 
+import charm.openstack.dragent as dragent  # noqa
+
 import charms_openstack.bus
 import charms_openstack.charm as charm
 
