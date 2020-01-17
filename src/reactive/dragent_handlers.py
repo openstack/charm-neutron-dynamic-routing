@@ -58,7 +58,7 @@ def setup_amqp_req(amqp):
 
 
 @reactive.when('amqp.available.ssl')
-def configure_ssl(amqp):
+def configure_ssl(_amqp):
     with charm.provide_charm_instance() as instance:
         instance.configure_ssl()
 

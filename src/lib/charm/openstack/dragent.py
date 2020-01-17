@@ -158,7 +158,7 @@ class DRAgentCharm(charms_openstack.charm.OpenStackCharm):
             self.package_codenames)
 
     def disable_services(self):
-        """Disble services, typically used awaiting required relations."""
+        """Disable services, typically used awaiting required relations."""
         for service in self.services:
             ch_core.host.service('disable', service)
             ch_core.host.service('stop', service)
