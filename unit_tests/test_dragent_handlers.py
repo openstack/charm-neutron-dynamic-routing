@@ -89,6 +89,20 @@ class TestDRAgentHandlers(test_utils.PatchHelper):
         amqp.request_access.assert_called_once_with(
             username='neutron', vhost='openstack')
 
+    def test_configure_ssl(self):
+        handlers.configure_ssl(mock.MagicMock())
+        self.dragent_charm.configure_ssl.assert_called_once_with()
+
+    def test_disable_services(self):
+        handlers.disable_services()
+        self.dragent_charm.disable_services.assert_called_once_with()
+        self.dragent_charm.assess_status.assert_called_once_with()
+
+    def test_enable_services(self):
+        handlers.enable_services()
+        self.dragent_charm.enable_services.assert_called_once_with()
+        self.dragent_charm.assess_status.assert_called_once_with()
+
     def test_render_configs(self):
         self.patch_object(handlers.reactive, 'set_flag')
         amqp = mock.MagicMock()

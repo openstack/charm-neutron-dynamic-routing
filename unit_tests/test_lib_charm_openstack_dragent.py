@@ -15,6 +15,8 @@
 from __future__ import absolute_import
 from __future__ import print_function
 
+import mock
+
 import charm.openstack.dragent as dragent
 
 import charms_openstack.test_utils as test_utils
@@ -72,3 +74,44 @@ class TestDRAgentCharm(Helper):
         dra = dragent.DRAgentCharm()
         self.assertEqual(dra.bgp_speaker_bindings(),
                          [dragent.SPEAKER_BINDING])
+
+    def test_get_os_codename(self):
+        dra = dragent.DRAgentCharm()
+        codename = 'codename'
+        with mock.patch('charms_openstack.charm.OpenStackCharm.'
+                        'get_os_codename_package',
+                        return_value=codename) as mock_get_os_codename:
+            self.assertEquals(dra.get_os_codename(), codename)
+        mock_get_os_codename.assert_called_with(
+            dra.release_pkg, dra.package_codenames
+        )
+
+    def test_disable_services(self):
+        dra = dragent.DRAgentCharm()
+        with mock.patch('charmhelpers.core.host.service') as mock_service:
+            dra.disable_services()
+        calls = [
+            mock.call(action, svc)
+            for action in ('disable', 'stop')
+            for svc in dra.services
+        ]
+        mock_service.assert_has_calls(calls)
+
+    def test_enable_services(self):
+        dra = dragent.DRAgentCharm()
+        with mock.patch('charmhelpers.core.host.service') as mock_service:
+            dra.enable_services()
+        calls = [
+            mock.call(action, svc)
+            for action in ('enable', 'start')
+            for svc in dra.services
+        ]
+        mock_service.assert_has_calls(calls)
+
+    def test_db_migration_overrides_base_class(self):
+        dra = dragent.DRAgentCharm()
+        with mock.patch(
+                'charms_openstack.charm.OpenStackCharm.'
+                'do_openstack_upgrade_db_migration') as base_db_migrate:
+            dra.do_openstack_upgrade_db_migration()
+        base_db_migrate.assert_not_called()
