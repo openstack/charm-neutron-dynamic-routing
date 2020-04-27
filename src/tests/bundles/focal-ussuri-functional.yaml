@@ -1,0 +1,113 @@
+variables:
+  openstack-origin: &openstack-origin distro
+
+series: focal
+
+comment:
+- 'machines section to decide order of deployment. database sooner = faster'
+machines:
+  '0':
+    constraints: mem=3072M
+  '1':
+    constraints: mem=3072M
+  '2':
+    constraints: mem=3072M
+  '3':
+  '4':
+  '5':
+  '6':
+  '7':
+    # for quagga which has no focal support yet
+    series: bionic
+
+applications:
+
+  keystone-mysql-router:
+    charm: cs:~openstack-charmers-next/mysql-router
+  neutron-api-mysql-router:
+    charm: cs:~openstack-charmers-next/mysql-router
+
+  mysql-innodb-cluster:
+    charm: cs:~openstack-charmers-next/mysql-innodb-cluster
+    num_units: 3
+    options:
+      source: *openstack-origin
+    to:
+      - '0'
+      - '1'
+      - '2'
+
+  keystone:
+    charm: cs:~openstack-charmers-next/keystone
+    num_units: 1
+    options:
+      openstack-origin: *openstack-origin
+      haproxy-server-timeout: 90000
+      haproxy-client-timeout: 90000
+      haproxy-queue-timeout: 9000
+      haproxy-connect-timeout: 9000
+    to:
+      - '3'
+
+  neutron-api:
+    charm: cs:~openstack-charmers-next/neutron-api
+    num_units: 1
+    options:
+      manage-neutron-plugin-legacy-mode: true
+      neutron-plugin: ovs
+      flat-network-providers: physnet1,
+      neutron-security-groups: true
+      openstack-origin: *openstack-origin
+      haproxy-server-timeout: 90000
+      haproxy-client-timeout: 90000
+      haproxy-queue-timeout: 9000
+      haproxy-connect-timeout: 9000
+    to:
+      - '4'
+
+  neutron-dynamic-routing:
+    charm: ../../../neutron-dynamic-routing
+    num_units: 1
+    options:
+      openstack-origin: *openstack-origin
+    to:
+      - '5'
+
+  rabbitmq-server:
+    charm: cs:~openstack-charmers-next/rabbitmq-server
+    num_units: 1
+    options:
+      source: *openstack-origin
+    to:
+      - '6'
+
+  quagga:
+    charm: cs:~openstack-charmers-next/bionic/quagga
+    series: bionic
+    num_units: 1
+    to:
+      - '7'
+
+relations:
+
+  - - 'neutron-dynamic-routing:amqp'
+    - 'rabbitmq-server:amqp'
+
+  - - 'neutron-dynamic-routing:bgp-speaker'
+    - 'quagga:bgpclient'
+
+  - - 'keystone:shared-db'
+    - 'keystone-mysql-router:shared-db'
+  - - 'keystone-mysql-router:db-router'
+    - 'mysql-innodb-cluster:db-router'
+
+  - - 'neutron-api:shared-db'
+    - 'neutron-api-mysql-router:shared-db'
+  - - 'neutron-api-mysql-router:db-router'
+    - 'mysql-innodb-cluster:db-router'
+
+  - - 'neutron-api:amqp'
+    - 'rabbitmq-server:amqp'
+
+  - - 'neutron-api:identity-service'
+    - 'keystone:identity-service'

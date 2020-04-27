@@ -3,6 +3,8 @@ configure:
 - zaza.openstack.charm_tests.dragent.configure.setup
 dev_bundles:
 gate_bundles:
+- focal-ussuri-functional
+- bionic-ussuri-functional
 - bionic-train-functional
 - bionic-stein-functional
 - bionic-rocky-functional
@@ -13,3 +15,6 @@ smoke_bundles:
 - bionic-train-functional
 tests:
 - zaza.openstack.charm_tests.dragent.tests.DRAgentTest
+tests_options:
+  force_deploy:
+    - focal-ussuri-functional
