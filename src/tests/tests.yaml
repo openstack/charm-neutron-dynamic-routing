@@ -3,8 +3,8 @@ configure:
 - zaza.openstack.charm_tests.dragent.configure.setup
 dev_bundles:
 - groovy-victoria-functional
-- focal-victoria-functional
 gate_bundles:
+- focal-victoria-functional
 - focal-ussuri-functional
 - bionic-ussuri-functional
 - bionic-train-functional
