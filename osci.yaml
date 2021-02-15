@@ -1,0 +1,65 @@
+- project:
+    templates:
+      - charm-unit-jobs
+    check:
+      jobs:
+      - groovy-victoria-functional
+      - focal-victoria-functional
+      - focal-ussuri-functional
+      - bionic-ussuri-functional
+      - bionic-train-functional
+      - bionic-stein-functional
+      - bionic-queens-functional
+    vars:
+      needs_charm_build: true
+      charm_build_name: neutron-dynamic-routing
+
+
+- job:
+    name: groovy-victoria-functional
+    parent: func-target
+    dependencies: &smoke-jobs
+      - bionic-ussuri-functional
+    vars:
+      tox_extra_args: groovy-victoria-functional
+- job:
+    name: focal-victoria-functional
+    parent: func-target
+    dependencies: *smoke-jobs
+    vars:
+      tox_extra_args: focal-victoria-functional
+- job:
+    name: focal-ussuri-functional
+    parent: func-target
+    dependencies: *smoke-jobs
+    vars:
+      tox_extra_args: focal-ussuri-functional
+- job:
+    name: bionic-ussuri-functional
+    parent: func-target
+    dependencies:
+        - osci-lint
+        - tox-py35
+        - tox-py36
+        - tox-py37
+        - tox-py38
+    vars:
+      tox_extra_args: bionic-ussuri-functional
+- job:
+    name: bionic-train-functional
+    parent: func-target
+    dependencies: *smoke-jobs
+    vars:
+      tox_extra_args: bionic-train-functional
+- job:
+    name: bionic-stein-functional
+    parent: func-target
+    dependencies: *smoke-jobs
+    vars:
+      tox_extra_args: bionic-stein-functional
+- job:
+    name: bionic-queens-functional
+    parent: func-target
+    dependencies: *smoke-jobs
+    vars:
+      tox_extra_args: bionic-queens-functional
