@@ -8,12 +8,13 @@ gate_bundles:
 - bionic-ussuri-functional
 - bionic-train-functional
 - bionic-stein-functional
-- bionic-rocky-functional
 - bionic-queens-functional
-- xenial-pike-functional
-- xenial-queens-functional
 smoke_bundles:
 - bionic-train-functional
+dev_bundles:
+- xenial-pike-functional
+- xenial-queens-functional
+- bionic-rocky-functional
 tests:
 - zaza.openstack.charm_tests.dragent.tests.DRAgentTest
 tests_options:
