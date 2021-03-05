@@ -1,22 +1,30 @@
 charm_name: neutron-dynamic-routing
+
 configure:
 - zaza.openstack.charm_tests.dragent.configure.setup
+
 gate_bundles:
 - groovy-victoria-functional
+- focal-wallaby-functional
 - focal-victoria-functional
 - focal-ussuri-functional
 - bionic-ussuri-functional
 - bionic-train-functional
 - bionic-stein-functional
 - bionic-queens-functional
+
 smoke_bundles:
 - bionic-train-functional
+
 dev_bundles:
 - xenial-pike-functional
 - xenial-queens-functional
 - bionic-rocky-functional
+- hirsute-wallaby-functional
+
 tests:
 - zaza.openstack.charm_tests.dragent.tests.DRAgentTest
+
 tests_options:
   force_deploy:
-    - groovy-victoria-functional
+    - hirsute-wallaby-functional

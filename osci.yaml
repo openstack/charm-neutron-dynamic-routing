@@ -3,7 +3,9 @@
       - charm-unit-jobs
     check:
       jobs:
+      - hirsute-wallaby-functional
       - groovy-victoria-functional
+      - focal-wallaby-functional
       - focal-victoria-functional
       - focal-ussuri-functional
       - bionic-ussuri-functional
@@ -16,12 +18,24 @@
 
 
 - job:
-    name: groovy-victoria-functional
+    name: hirsute-wallaby-functional
     parent: func-target
     dependencies: &smoke-jobs
       - bionic-ussuri-functional
     vars:
+      tox_extra_args: hirsute-wallaby-functional
+- job:
+    name: groovy-victoria-functional
+    parent: func-target
+    dependencies: *smoke-jobs
+    vars:
       tox_extra_args: groovy-victoria-functional
+- job:
+    name: focal-wallaby-functional
+    parent: func-target
+    dependencies: *smoke-jobs
+    vars:
+      tox_extra_args: focal-wallaby-functional
 - job:
     name: focal-victoria-functional
     parent: func-target
