@@ -20,11 +20,14 @@ dev_bundles:
 - xenial-pike-functional
 - xenial-queens-functional
 - bionic-rocky-functional
+- focal-xena-functional
 - hirsute-wallaby-functional
+- impish-xena-functional
 
 tests:
 - zaza.openstack.charm_tests.dragent.tests.DRAgentTest
 
 tests_options:
   force_deploy:
-    - hirsute-wallaby-functional
+    - groovy-victoria-functional
+    - impish-xena-functional
