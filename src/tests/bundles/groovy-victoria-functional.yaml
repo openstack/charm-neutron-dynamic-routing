@@ -23,12 +23,14 @@ machines:
 applications:
 
   keystone-mysql-router:
-    charm: cs:~openstack-charmers-next/mysql-router
+    charm: cs:~openstack-charmers/mysql-router
+    channel: candidate
   neutron-api-mysql-router:
-    charm: cs:~openstack-charmers-next/mysql-router
+    charm: cs:~openstack-charmers/mysql-router
+    channel: candidate
 
   mysql-innodb-cluster:
-    charm: cs:~openstack-charmers-next/mysql-innodb-cluster
+    charm: cs:~openstack-charmers/mysql-innodb-cluster
     num_units: 3
     options:
       source: *openstack-origin
@@ -36,9 +38,10 @@ applications:
       - '0'
       - '1'
       - '2'
+    channel: candidate
 
   keystone:
-    charm: cs:~openstack-charmers-next/keystone
+    charm: cs:~openstack-charmers/keystone
     num_units: 1
     options:
       openstack-origin: *openstack-origin
@@ -48,9 +51,10 @@ applications:
       haproxy-connect-timeout: 9000
     to:
       - '3'
+    channel: candidate
 
   neutron-api:
-    charm: cs:~openstack-charmers-next/neutron-api
+    charm: cs:~openstack-charmers/neutron-api
     num_units: 1
     options:
       manage-neutron-plugin-legacy-mode: true
@@ -64,6 +68,7 @@ applications:
       haproxy-connect-timeout: 9000
     to:
       - '4'
+    channel: candidate
 
   neutron-dynamic-routing:
     charm: ../../../neutron-dynamic-routing
@@ -74,15 +79,16 @@ applications:
       - '5'
 
   rabbitmq-server:
-    charm: cs:~openstack-charmers-next/rabbitmq-server
+    charm: cs:~openstack-charmers/rabbitmq-server
     num_units: 1
     options:
       source: *openstack-origin
     to:
       - '6'
+    channel: candidate
 
   quagga:
-    charm: cs:~openstack-charmers-next/bionic/quagga
+    charm: cs:~openstack-charmers/quagga
     series: bionic
     num_units: 1
     to:

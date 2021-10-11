@@ -7,7 +7,8 @@ relations:
 - [neutron-api, keystone]
 applications:
   keystone:
-    charm: cs:~openstack-charmers-next/bionic/keystone
+    charm: cs:~openstack-charmers/keystone
+    channel: candidate
     constraints: mem=1G
     num_units: 1
     options:
@@ -18,13 +19,15 @@ applications:
         haproxy-connect-timeout: 9000
     series: bionic
   mysql:
-    charm: cs:~openstack-charmers-next/bionic/percona-cluster
+    charm: cs:~openstack-charmers/percona-cluster
+    channel: candidate
     constraints: mem=4G
     num_units: 1
     options: {source: 'cloud:bionic-rocky'}
     series: bionic
   neutron-api:
-    charm: cs:~openstack-charmers-next/bionic/neutron-api
+    charm: cs:~openstack-charmers/neutron-api
+    channel: candidate
     constraints: mem=1G
     num_units: 1
     options:
@@ -42,12 +45,13 @@ applications:
     options: {openstack-origin: 'cloud:bionic-rocky'}
     series: bionic
   rabbitmq-server:
-    charm: cs:~openstack-charmers-next/bionic/rabbitmq-server
+    charm: cs:~openstack-charmers/rabbitmq-server
+    channel: candidate
     constraints: mem=1G
     num_units: 1
     options: {source: 'cloud:bionic-rocky'}
     series: bionic
   quagga:
-    charm: cs:~openstack-charmers-next/bionic/quagga
+    charm: cs:~openstack-charmers/quagga
     num_units: 1
     series: bionic
