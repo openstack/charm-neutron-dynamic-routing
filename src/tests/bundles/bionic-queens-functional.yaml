@@ -48,7 +48,7 @@ applications:
     num_units: 1
     series: bionic
   quagga:
-    charm: cs:~openstack-charmers/quagga
+    charm: cs:~openstack-charmers-next/quagga
     num_units: 1
     series: bionic
 
