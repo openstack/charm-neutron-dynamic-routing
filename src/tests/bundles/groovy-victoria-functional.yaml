@@ -24,10 +24,8 @@ applications:
 
   keystone-mysql-router:
     charm: cs:~openstack-charmers/mysql-router
-    channel: candidate
   neutron-api-mysql-router:
     charm: cs:~openstack-charmers/mysql-router
-    channel: candidate
 
   mysql-innodb-cluster:
     charm: cs:~openstack-charmers/mysql-innodb-cluster
@@ -38,7 +36,6 @@ applications:
       - '0'
       - '1'
       - '2'
-    channel: candidate
 
   keystone:
     charm: cs:~openstack-charmers/keystone
@@ -51,7 +48,6 @@ applications:
       haproxy-connect-timeout: 9000
     to:
       - '3'
-    channel: candidate
 
   neutron-api:
     charm: cs:~openstack-charmers/neutron-api
@@ -68,7 +64,6 @@ applications:
       haproxy-connect-timeout: 9000
     to:
       - '4'
-    channel: candidate
 
   neutron-dynamic-routing:
     charm: ../../../neutron-dynamic-routing
@@ -85,7 +80,6 @@ applications:
       source: *openstack-origin
     to:
       - '6'
-    channel: candidate
 
   quagga:
     charm: cs:~openstack-charmers-next/quagga

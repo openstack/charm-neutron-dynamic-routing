@@ -9,7 +9,6 @@ relations:
 applications:
   keystone:
     charm: cs:~openstack-charmers/keystone
-    channel: candidate
     constraints: mem=1G
     num_units: 1
     options:
@@ -21,14 +20,12 @@ applications:
     series: xenial
   mysql:
     charm: cs:~openstack-charmers/percona-cluster
-    channel: candidate
     constraints: mem=4G
     num_units: 1
     options: {source: 'cloud:xenial-ocata'}
     series: xenial
   neutron-api:
     charm: cs:~openstack-charmers/neutron-api
-    channel: candidate
     constraints: mem=1G
     num_units: 1
     options:
@@ -47,7 +44,6 @@ applications:
     series: xenial
   rabbitmq-server:
     charm: cs:~openstack-charmers/rabbitmq-server
-    channel: candidate
     constraints: mem=1G
     num_units: 1
     options: {source: 'cloud:xenial-ocata'}
