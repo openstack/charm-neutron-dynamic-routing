@@ -1,7 +1,7 @@
 variables:
-  openstack-origin: &openstack-origin distro
+  openstack-origin: &openstack-origin cloud:focal-yoga
 
-series: impish
+series: focal
 
 comment:
 - 'machines section to decide order of deployment. database sooner = faster'
@@ -17,7 +17,7 @@ machines:
   '5':
   '6':
   '7':
-    # for quagga which has no impish support yet
+    # for quagga which has no focal support yet
     series: bionic
 
 applications:

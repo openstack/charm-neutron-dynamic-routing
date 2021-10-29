@@ -3,29 +3,37 @@
       - charm-unit-jobs
     check:
       jobs:
-      - impish-xena-functional:
+      - bionic-queens-functional
+      - bionic-stein-functional
+      - bionic-train-functional
+      - bionic-ussuri-functional
+      - focal-ussuri-functional
+      - focal-victoria-functional
+      - focal-wallaby-functional
+      - focal-xena-functional
+      - focal-yoga-functional:
           voting: false
       - hirsute-wallaby-functional
-      - groovy-victoria-functional
-      - focal-xena-functional:
+      - impish-xena-functional:
           voting: false
-      - focal-wallaby-functional
-      - focal-victoria-functional
-      - focal-ussuri-functional
-      - bionic-ussuri-functional
-      - bionic-train-functional
-      - bionic-stein-functional
-      - bionic-queens-functional
+      - jammy-yoga-functional:
+          voting: false
     vars:
       needs_charm_build: true
       charm_build_name: neutron-dynamic-routing
 
 
 - job:
-    name: impish-xena-functional
+    name: jammy-yoga-functional
     parent: func-target
     dependencies: &smoke-jobs
       - bionic-ussuri-functional
+    vars:
+      tox_extra_args: jammy-yoga-functional
+- job:
+    name: impish-xena-functional
+    parent: func-target
+    dependencies: *smoke-jobs
     vars:
       tox_extra_args: impish-xena-functional
 - job:
@@ -35,11 +43,11 @@
     vars:
       tox_extra_args: hirsute-wallaby-functional
 - job:
-    name: groovy-victoria-functional
+    name: focal-yoga-functional
     parent: func-target
     dependencies: *smoke-jobs
     vars:
-      tox_extra_args: groovy-victoria-functional
+      tox_extra_args: focal-yoga-functional
 - job:
     name: focal-xena-functional
     parent: func-target

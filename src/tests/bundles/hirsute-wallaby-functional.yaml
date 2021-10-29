@@ -17,7 +17,7 @@ machines:
   '5':
   '6':
   '7':
-    # for quagga which has no focal/groovy/hirsute support yet
+    # for quagga which has no hirsute support yet
     series: bionic
 
 applications:

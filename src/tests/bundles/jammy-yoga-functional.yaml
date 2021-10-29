@@ -1,7 +1,7 @@
 variables:
   openstack-origin: &openstack-origin distro
 
-series: groovy
+series: jammy
 
 comment:
 - 'machines section to decide order of deployment. database sooner = faster'
@@ -17,7 +17,7 @@ machines:
   '5':
   '6':
   '7':
-    # for quagga which has no focal/groovy support yet
+    # for quagga which has no jammy support yet
     series: bionic
 
 applications:
