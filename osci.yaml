@@ -1,103 +1,13 @@
 - project:
     templates:
-      - charm-unit-jobs
-    check:
-      jobs:
-      - bionic-queens-functional
-      - bionic-stein-functional
-      - bionic-train-functional
-      - bionic-ussuri-functional
-      - focal-ussuri-functional
-      - focal-victoria-functional
-      - focal-wallaby-functional
-      - focal-xena-functional
-      - focal-yoga-functional:
-          voting: false
-      - hirsute-wallaby-functional
-      - impish-xena-functional:
-          voting: false
-      - jammy-yoga-functional:
-          voting: false
+      - charm-yoga-unit-jobs
+      - charm-yoga-functional-jobs
+      - charm-xena-functional-jobs
+      - charm-wallaby-functional-jobs
+      - charm-victoria-functional-jobs
+      - charm-ussuri-functional-jobs
+      - charm-stein-functional-jobs
+      - charm-queens-functional-jobs
     vars:
       needs_charm_build: true
       charm_build_name: neutron-dynamic-routing
-
-
-- job:
-    name: jammy-yoga-functional
-    parent: func-target
-    dependencies: &smoke-jobs
-      - bionic-ussuri-functional
-    vars:
-      tox_extra_args: jammy-yoga-functional
-- job:
-    name: impish-xena-functional
-    parent: func-target
-    dependencies: *smoke-jobs
-    vars:
-      tox_extra_args: impish-xena-functional
-- job:
-    name: hirsute-wallaby-functional
-    parent: func-target
-    dependencies: *smoke-jobs
-    vars:
-      tox_extra_args: hirsute-wallaby-functional
-- job:
-    name: focal-yoga-functional
-    parent: func-target
-    dependencies: *smoke-jobs
-    vars:
-      tox_extra_args: focal-yoga-functional
-- job:
-    name: focal-xena-functional
-    parent: func-target
-    dependencies: *smoke-jobs
-    vars:
-      tox_extra_args: focal-xena-functional
-- job:
-    name: focal-wallaby-functional
-    parent: func-target
-    dependencies: *smoke-jobs
-    vars:
-      tox_extra_args: focal-wallaby-functional
-- job:
-    name: focal-victoria-functional
-    parent: func-target
-    dependencies: *smoke-jobs
-    vars:
-      tox_extra_args: focal-victoria-functional
-- job:
-    name: focal-ussuri-functional
-    parent: func-target
-    dependencies: *smoke-jobs
-    vars:
-      tox_extra_args: focal-ussuri-functional
-- job:
-    name: bionic-ussuri-functional
-    parent: func-target
-    dependencies:
-        - osci-lint
-        - tox-py35
-        - tox-py36
-        - tox-py37
-        - tox-py38
-    vars:
-      tox_extra_args: bionic-ussuri-functional
-- job:
-    name: bionic-train-functional
-    parent: func-target
-    dependencies: *smoke-jobs
-    vars:
-      tox_extra_args: bionic-train-functional
-- job:
-    name: bionic-stein-functional
-    parent: func-target
-    dependencies: *smoke-jobs
-    vars:
-      tox_extra_args: bionic-stein-functional
-- job:
-    name: bionic-queens-functional
-    parent: func-target
-    dependencies: *smoke-jobs
-    vars:
-      tox_extra_args: bionic-queens-functional

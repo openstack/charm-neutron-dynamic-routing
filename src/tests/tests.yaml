@@ -4,30 +4,30 @@ configure:
 - zaza.openstack.charm_tests.dragent.configure.setup
 
 gate_bundles:
-- bionic-queens-functional
-- bionic-stein-functional
-- bionic-ussuri-functional
-- focal-ussuri-functional
-- focal-victoria-functional
-- focal-wallaby-functional
-- focal-xena-functional
-- hirsute-wallaby-functional
-- impish-xena-functional
+- bionic-queens
+- bionic-stein
+- bionic-ussuri
+- focal-ussuri
+- focal-victoria
+- focal-wallaby
+- focal-xena
+- hirsute-wallaby
+- impish-xena
 
 smoke_bundles:
-- focal-ussuri-functional
+- focal-ussuri
 
 dev_bundles:
-- bionic-rocky-functional
-- bionic-train-functional
-- focal-yoga-functional
-- jammy-yoga-functional
+- bionic-rocky
+- bionic-train
+- focal-yoga
+- jammy-yoga
 
 tests:
 - zaza.openstack.charm_tests.dragent.tests.DRAgentTest
 
 tests_options:
   force_deploy:
-    - hirsute-wallaby-functional
-    - impish-xena-functional
-    - jammy-yoga-functional
+    - hirsute-wallaby
+    - impish-xena
+    - jammy-yoga
