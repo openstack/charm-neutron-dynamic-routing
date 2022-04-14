@@ -1,0 +1,3 @@
+options:
+  openstack-origin:
+    default: yoga

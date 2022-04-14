@@ -1,13 +1,10 @@
 - project:
     templates:
-      - charm-yoga-unit-jobs
-      - charm-yoga-functional-jobs
+      - charm-unit-jobs-py38
+      - charm-unit-jobs-py310
       - charm-xena-functional-jobs
-      - charm-wallaby-functional-jobs
-      - charm-victoria-functional-jobs
-      - charm-ussuri-functional-jobs
-      - charm-stein-functional-jobs
-      - charm-queens-functional-jobs
+      - charm-yoga-functional-jobs
     vars:
       needs_charm_build: true
       charm_build_name: neutron-dynamic-routing
+      build_type: charmcraft

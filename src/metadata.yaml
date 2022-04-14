@@ -7,11 +7,8 @@ description: |
 tags:
 - openstack
 series:
-- bionic
 - focal
-- groovy
-- hirsute
-- impish
+- jammy
 subordinate: false
 extra-bindings:
   # Used to specify the OpenStack provider network interface
