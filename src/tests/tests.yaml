@@ -4,18 +4,19 @@ configure:
 - zaza.openstack.charm_tests.dragent.configure.setup
 
 gate_bundles:
-- focal-xena
-- focal-yoga
-- jammy-yoga
+- jammy-zed
 
 smoke_bundles:
-- focal-yoga
+- jammy-zed
 
-dev_bundles: []
+dev_bundles:
+- jammy-zed
+- jammy-antelope
+- lunar-antelope
 
 tests:
 - zaza.openstack.charm_tests.dragent.tests.DRAgentTest
 
 tests_options:
   force_deploy:
-    - jammy-yoga
+    - lunar-antelope
