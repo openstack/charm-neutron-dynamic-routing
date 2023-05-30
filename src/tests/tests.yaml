@@ -1,6 +1,7 @@
 charm_name: neutron-dynamic-routing
 
 configure:
+- zaza.openstack.charm_tests.vault.setup.auto_initialize
 - zaza.openstack.charm_tests.dragent.configure.setup
 
 gate_bundles:
@@ -10,9 +11,25 @@ smoke_bundles:
 - jammy-zed
 
 dev_bundles:
+# There is no jammy-zed-ovn bundle as neutron-dynamic-routing
+# compatibility with ML2/ovn has only been declared in Neutron
+# 22.0.0 which is used in 2023.1 (Antelope)
 - jammy-zed
 - jammy-antelope
+- jammy-antelope-ovn
 - lunar-antelope
+- lunar-antelope-ovn
+
+target_deploy_status:
+  neutron-api-plugin-ovn:
+    workload-status: waiting
+    workload-status-message-prefix: "'certificates' awaiting server certificate data, 'ovsdb-cms' incomplete"
+  ovn-central:
+    workload-status: waiting
+    workload-status-message-prefix: "'ovsdb-peer' incomplete, 'certificates' awaiting server certificate data"
+  vault:
+    workload-status: blocked
+    workload-status-message-prefix: Vault needs to be initialized
 
 tests:
 - zaza.openstack.charm_tests.dragent.tests.DRAgentTest

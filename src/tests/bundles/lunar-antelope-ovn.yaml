@@ -1,9 +1,9 @@
 local_overlay_enabled: False
 
 variables:
-  openstack-origin: &openstack-origin cloud:jammy-antelope
+  openstack-origin: &openstack-origin distro
 
-series: jammy
+series: lunar
 
 comment:
 - 'machines section to decide order of deployment. database sooner = faster'
@@ -22,6 +22,9 @@ machines:
     # osci-frr has a limited set of supported series.
     series: jammy
   '8':
+  '9':
+  '10':
+  '11':
 
 applications:
 
@@ -93,12 +96,26 @@ applications:
     to:
       - '7'
 
+  ovn-central:
+    charm: ch:ovn-central
+    num_units: 3
+    options:
+      source: *openstack-origin
+    channel: latest/edge
+    to:
+      - '8'
+      - '9'
+      - '10'
+  neutron-api-plugin-ovn:
+    charm: ch:neutron-api-plugin-ovn
+    channel: latest/edge
+
   vault:
     charm: ch:vault
     num_units: 1
     channel: latest/edge
     to:
-      - '8'
+      - '11'
 
 relations:
 
@@ -124,8 +141,20 @@ relations:
   - - 'neutron-api:identity-service'
     - 'keystone:identity-service'
 
+  - - ovn-central:certificates
+    - vault:certificates
+
+  - - ovn-central:ovsdb-cms
+    - neutron-api-plugin-ovn:ovsdb-cms
+
   - - vault:certificates
     - keystone:certificates
 
   - - vault:certificates
     - neutron-api:certificates
+
+  - - vault:certificates
+    - neutron-api-plugin-ovn:certificates
+
+  - - neutron-api-plugin-ovn:neutron-plugin
+    - neutron-api:neutron-plugin-api-subordinate

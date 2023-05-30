@@ -21,6 +21,7 @@ machines:
   '7':
     # osci-frr has a limited set of supported series.
     series: jammy
+  '8':
 
 applications:
 
@@ -92,6 +93,13 @@ applications:
     to:
       - '7'
 
+  vault:
+    charm: ch:vault
+    num_units: 1
+    channel: latest/edge
+    to:
+      - '8'
+
 relations:
 
   - - 'neutron-dynamic-routing:amqp'
@@ -115,3 +123,9 @@ relations:
 
   - - 'neutron-api:identity-service'
     - 'keystone:identity-service'
+
+  - - vault:certificates
+    - keystone:certificates
+
+  - - vault:certificates
+    - neutron-api:certificates

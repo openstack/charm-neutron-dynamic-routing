@@ -1,9 +1,29 @@
 - project:
     templates:
       - charm-unit-jobs-py310
-      - charm-functional-jobs
+    check:
+      jobs:
+      - jammy-zed
+      - jammy-antelope
+      - jammy-antelope-ovn
+      - lunar-antelope:
+          voting: false
+      - lunar-antelope-ovn:
+          voting: false
     vars:
       needs_charm_build: true
       charm_build_name: neutron-dynamic-routing
       build_type: charmcraft
       charmcraft_channel: 2.1/stable
+
+- job:
+    name: jammy-antelope-ovn
+    parent: func-target
+    vars:
+      tox_extra_args: '-- jammy-antelope-ovn'
+- job:
+    name: lunar-antelope-ovn
+    parent: func-target
+    vars:
+      juju_snap_channel: "3.2/stable"
+      tox_extra_args: '-- lunar-antelope-ovn'
