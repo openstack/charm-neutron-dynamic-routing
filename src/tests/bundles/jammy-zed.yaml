@@ -31,6 +31,15 @@ applications:
   neutron-api-mysql-router:
     charm: ch:mysql-router
     channel: latest/edge
+  nova-mysql-router:
+    charm: ch:mysql-router
+    channel: latest/edge
+  glance-mysql-router:
+    charm: ch:mysql-router
+    channel: latest/edge
+  placement-mysql-router:
+    charm: ch:mysql-router
+    channel: latest/edge
 
   mysql-innodb-cluster:
     charm: ch:mysql-innodb-cluster
@@ -60,13 +69,15 @@ applications:
     options:
       manage-neutron-plugin-legacy-mode: true
       neutron-plugin: ovs
-      flat-network-providers: physnet1,
-      neutron-security-groups: true
+      flat-network-providers: physnet1
+      enable-ml2-port-security: True
+      neutron-security-groups: True
       openstack-origin: *openstack-origin
       haproxy-server-timeout: 90000
       haproxy-client-timeout: 90000
       haproxy-queue-timeout: 9000
       haproxy-connect-timeout: 9000
+      enable-dvr: True
     to:
       - '4'
     channel: latest/edge
@@ -100,6 +111,52 @@ applications:
     to:
       - '8'
 
+  nova-compute:
+    constraints: mem=7168M
+    charm: ch:nova-compute
+    num_units: 2
+    options:
+      openstack-origin: *openstack-origin
+      debug: True
+    channel: latest/edge
+
+  nova-cloud-controller:
+    charm: ch:nova-cloud-controller
+    num_units: 1
+    options:
+      openstack-origin: *openstack-origin
+      debug: True
+      network-manager: Neutron
+    channel: latest/edge
+
+  placement:
+    charm: ch:placement
+    num_units: 1
+    constraints: mem=1G
+    options:
+      openstack-origin: *openstack-origin
+      debug: true
+    channel: latest/edge
+
+  glance:
+    charm: ch:glance
+    num_units: 1
+    options:
+      openstack-origin: *openstack-origin
+    channel: latest/edge
+
+  neutron-openvswitch:
+    charm: ch:neutron-openvswitch
+    num_units: 0
+    options:
+      debug: True
+      enable-local-dhcp-and-metadata: True
+      use-dvr-snat: True
+      bridge-mappings: physnet1:br-ex
+      prevent-arp-spoofing: False
+      firewall-driver: openvswitch
+    channel: latest/edge
+
 relations:
 
   - - 'neutron-dynamic-routing:amqp'
@@ -124,8 +181,68 @@ relations:
   - - 'neutron-api:identity-service'
     - 'keystone:identity-service'
 
+  - - 'nova-mysql-router:db-router'
+    - 'mysql-innodb-cluster:db-router'
+  - - 'glance-mysql-router:db-router'
+    - 'mysql-innodb-cluster:db-router'
+  - - 'placement-mysql-router:db-router'
+    - 'mysql-innodb-cluster:db-router'
+
+  - - keystone:identity-service
+    - glance:identity-service
+
+  - - nova-mysql-router:shared-db
+    - nova-cloud-controller:shared-db
+
+  - - glance:image-service
+    - nova-cloud-controller:image-service
+  - - glance:image-service
+    - nova-compute:image-service
+  - - glance-mysql-router:shared-db
+    - glance:shared-db
+
+  - - keystone:identity-service
+    - nova-cloud-controller:identity-service
+
+  - - nova-compute:cloud-compute
+    - nova-cloud-controller:cloud-compute
+
+  - - neutron-api:neutron-api
+    - nova-cloud-controller:neutron-api
+
+  - - rabbitmq-server:amqp
+    - nova-cloud-controller:amqp
+
+  - - rabbitmq-server:amqp
+    - nova-compute:amqp
+
+  - - placement
+    - placement-mysql-router
+
+  - - placement
+    - keystone
+
+  - - placement
+    - nova-cloud-controller
+
   - - vault:certificates
     - keystone:certificates
 
   - - vault:certificates
     - neutron-api:certificates
+
+  - - vault:certificates
+    - glance:certificates
+
+  - - vault:certificates
+    - nova-cloud-controller:certificates
+
+  - - vault:certificates
+    - placement:certificates
+
+  - - rabbitmq-server:amqp
+    - neutron-openvswitch:amqp
+  - - neutron-api:neutron-plugin-api
+    - neutron-openvswitch:neutron-plugin-api
+  - - neutron-openvswitch:neutron-plugin
+    - nova-compute:neutron-plugin
