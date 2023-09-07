@@ -8,20 +8,21 @@ configure:
 - zaza.openstack.charm_tests.dragent.configure.setup
 
 gate_bundles:
-- jammy-zed
-
-smoke_bundles:
-- jammy-zed
-
-dev_bundles:
-# There is no jammy-zed-ovn bundle as neutron-dynamic-routing
-# compatibility with ML2/ovn has only been declared in Neutron
-# 22.0.0 which is used in 2023.1 (Antelope)
-- jammy-zed
 - jammy-antelope
 - jammy-antelope-ovn
+
+smoke_bundles:
+- jammy-antelope-ovn
+
+dev_bundles:
+- jammy-antelope
+- jammy-antelope-ovn
+- jammy-bobcat
+- jammy-bobcat-ovn
 - lunar-antelope
 - lunar-antelope-ovn
+- mantic-bobcat
+- mantic-bobcat-ovn
 
 target_deploy_status:
   neutron-api-plugin-ovn:
