@@ -3,13 +3,11 @@
       - charm-unit-jobs-py310
     check:
       jobs:
-      - jammy-antelope
-      - jammy-antelope-ovn
       - jammy-bobcat
       - jammy-bobcat-ovn
-      - lunar-antelope:
+      - jammy-caracal:
           voting: false
-      - lunar-antelope-ovn:
+      - jammy-caracal-ovn:
           voting: false
     vars:
       needs_charm_build: true
@@ -18,16 +16,12 @@
       charmcraft_channel: 2.x/stable
 
 - job:
-    name: jammy-antelope-ovn
+    name: jammy-caracal-ovn
     parent: func-target
     vars:
+      juju_snap_channel: '3.1/stable'
+      pip_constraints_url: 'https://raw.githubusercontent.com/openstack-charmers/zaza-openstack-tests/master/constraints/constraints-2024.1.txt'
       tox_extra_args: '-- jammy-antelope-ovn'
-- job:
-    name: lunar-antelope-ovn
-    parent: func-target
-    vars:
-      juju_snap_channel: "3.2/stable"
-      tox_extra_args: '-- lunar-antelope-ovn'
 - job:
     name: jammy-bobcat-ovn
     parent: func-target

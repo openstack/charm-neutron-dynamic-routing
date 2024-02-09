@@ -1,29 +1,20 @@
 charm_name: neutron-dynamic-routing
 
 configure:
-- zaza.openstack.charm_tests.vault.setup.auto_initialize
-- zaza.openstack.charm_tests.glance.setup.add_lts_image
-- zaza.openstack.charm_tests.nova.setup.create_flavors
-- zaza.openstack.charm_tests.nova.setup.manage_ssh_key
-- zaza.openstack.charm_tests.dragent.configure.setup
+  - zaza.openstack.charm_tests.vault.setup.auto_initialize
+  - zaza.openstack.charm_tests.glance.setup.add_lts_image
+  - zaza.openstack.charm_tests.nova.setup.create_flavors
+  - zaza.openstack.charm_tests.nova.setup.manage_ssh_key
+  - zaza.openstack.charm_tests.dragent.configure.setup
 
 gate_bundles:
-- jammy-antelope
-- jammy-antelope-ovn
-
+  - jammy-antelope
+  - jammy-bobcat
+  - jammy-caracal
 smoke_bundles:
-- jammy-antelope-ovn
-
+  - jammy-caracal
 dev_bundles:
-- jammy-antelope
-- jammy-antelope-ovn
-- jammy-bobcat
-- jammy-bobcat-ovn
-- lunar-antelope
-- lunar-antelope-ovn
-- mantic-bobcat
-- mantic-bobcat-ovn
-
+  - noble-caracal
 target_deploy_status:
   neutron-api-plugin-ovn:
     workload-status: waiting
@@ -40,8 +31,8 @@ target_deploy_status:
 
 
 tests:
-- zaza.openstack.charm_tests.dragent.tests.DRAgentTest
+  - zaza.openstack.charm_tests.dragent.tests.DRAgentTest
 
 tests_options:
   force_deploy:
-    - lunar-antelope
+    - noble-caracal

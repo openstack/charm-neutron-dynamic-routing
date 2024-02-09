@@ -64,7 +64,7 @@ applications:
       haproxy-connect-timeout: 9000
     to:
       - '3'
-    channel: latest/edge
+    channel: 2024.1/edge
 
   neutron-api:
     charm: ch:neutron-api
@@ -79,7 +79,7 @@ applications:
       haproxy-connect-timeout: 9000
     to:
       - '4'
-    channel: latest/edge
+    channel: 2024.1/edge
 
   neutron-dynamic-routing:
     charm: ../../../neutron-dynamic-routing_ubuntu-22.04-amd64.charm
@@ -115,7 +115,7 @@ applications:
       - '10'
   neutron-api-plugin-ovn:
     charm: ch:neutron-api-plugin-ovn
-    channel: latest/edge
+    channel: 2024.1/edge
     options:
       enable-distributed-floating-ip: True
 
@@ -133,7 +133,7 @@ applications:
     options:
       openstack-origin: *openstack-origin
       debug: True
-    channel: latest/edge
+    channel: 2024.1/edge
 
   nova-cloud-controller:
     charm: ch:nova-cloud-controller
@@ -142,7 +142,7 @@ applications:
       openstack-origin: *openstack-origin
       debug: True
       network-manager: Neutron
-    channel: latest/edge
+    channel: 2024.1/edge
 
   placement:
     charm: ch:placement
@@ -151,14 +151,14 @@ applications:
     options:
       openstack-origin: *openstack-origin
       debug: true
-    channel: latest/edge
+    channel: 2024.1/edge
 
   glance:
     charm: ch:glance
     num_units: 1
     options:
       openstack-origin: *openstack-origin
-    channel: latest/edge
+    channel: 2024.1/edge
 
   ovn-chassis:
     charm: ch:ovn-chassis
