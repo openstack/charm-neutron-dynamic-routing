@@ -108,7 +108,7 @@ applications:
     num_units: 3
     options:
       source: *openstack-origin
-    channel: latest/edge
+    channel: 24.03/edge
     to:
       - '8'
       - '9'
@@ -162,7 +162,7 @@ applications:
 
   ovn-chassis:
     charm: ch:ovn-chassis
-    channel: latest/edge
+    channel: 24.03/edge
     options:
       ovn-bridge-mappings: physnet1:br-ex
       prefer-chassis-as-gw: true
