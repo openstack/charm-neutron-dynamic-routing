@@ -78,7 +78,7 @@ class TestDRAgentCharm(Helper):
         with mock.patch('charms_openstack.charm.OpenStackCharm.'
                         'get_os_codename_package',
                         return_value=codename) as mock_get_os_codename:
-            self.assertEquals(dra.get_os_codename(), codename)
+            self.assertEqual(dra.get_os_codename(), codename)
         mock_get_os_codename.assert_called_with(
             dra.release_pkg, dra.package_codenames
         )

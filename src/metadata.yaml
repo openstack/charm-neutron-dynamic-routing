@@ -6,8 +6,6 @@ description: |
   networks to the BGP infrastructure.
 tags:
   - openstack
-series:
-  - jammy
 subordinate: false
 extra-bindings:
   # Used to specify the OpenStack provider network interface
