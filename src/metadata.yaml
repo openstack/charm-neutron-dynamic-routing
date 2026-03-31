@@ -5,9 +5,10 @@ description: |
   Neutron Dynamic Routing Agent acts as a BGP speaker advertising OpenStack
   networks to the BGP infrastructure.
 tags:
-  - openstack
+- openstack
 series:
-  - jammy
+- jammy
+- noble
 subordinate: false
 extra-bindings:
   # Used to specify the OpenStack provider network interface

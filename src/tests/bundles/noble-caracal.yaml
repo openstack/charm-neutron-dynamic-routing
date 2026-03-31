@@ -83,7 +83,7 @@ applications:
     channel: 2024.1/edge
 
   neutron-dynamic-routing:
-    charm: ../../../neutron-dynamic-routing_ubuntu-22.04-amd64.charm
+    charm: ../../../neutron-dynamic-routing_ubuntu-24.04-amd64.charm
     num_units: 1
     options:
       openstack-origin: *openstack-origin
