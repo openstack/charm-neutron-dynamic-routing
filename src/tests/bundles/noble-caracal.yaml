@@ -6,25 +6,24 @@ variables:
 series: noble
 
 comment:
-- 'machines section to decide order of deployment. database sooner = faster'
+  - "machines section to decide order of deployment. database sooner = faster"
 machines:
-  '0':
+  "0":
     constraints: mem=3072M
-  '1':
+  "1":
     constraints: mem=3072M
-  '2':
+  "2":
     constraints: mem=3072M
-  '3':
-  '4':
-  '5':
-  '6':
-  '7':
+  "3":
+  "4":
+  "5":
+  "6":
+  "7":
     # osci-frr has a limited set of supported series.
     series: jammy
-  '8':
+  "8":
 
 applications:
-
   keystone-mysql-router:
     charm: ch:mysql-router
     channel: latest/edge
@@ -45,9 +44,9 @@ applications:
     charm: ch:mysql-innodb-cluster
     num_units: 3
     to:
-      - '0'
-      - '1'
-      - '2'
+      - "0"
+      - "1"
+      - "2"
     channel: latest/edge
 
   keystone:
@@ -60,7 +59,7 @@ applications:
       haproxy-queue-timeout: 9000
       haproxy-connect-timeout: 9000
     to:
-      - '3'
+      - "3"
     channel: 2024.1/edge
 
   neutron-api:
@@ -79,22 +78,22 @@ applications:
       haproxy-connect-timeout: 9000
       enable-dvr: True
     to:
-      - '4'
+      - "4"
     channel: 2024.1/edge
 
   neutron-dynamic-routing:
-    charm: ../../../neutron-dynamic-routing_ubuntu-24.04-amd64.charm
+    charm: ../../../neutron-dynamic-routing_ubuntu@24.04-amd64.charm
     num_units: 1
     options:
       openstack-origin: *openstack-origin
     to:
-      - '5'
+      - "5"
 
   rabbitmq-server:
     charm: ch:rabbitmq-server
     num_units: 1
     to:
-      - '6'
+      - "6"
     channel: latest/edge
 
   osci-frr:
@@ -102,14 +101,14 @@ applications:
     series: jammy
     num_units: 1
     to:
-      - '7'
+      - "7"
 
   vault:
     charm: ch:vault
     num_units: 1
     channel: 1.8/stable
     to:
-      - '8'
+      - "8"
 
   nova-compute:
     constraints: mem=7168M
@@ -158,35 +157,34 @@ applications:
     channel: 2024.1/edge
 
 relations:
+  - - "neutron-dynamic-routing:amqp"
+    - "rabbitmq-server:amqp"
 
-  - - 'neutron-dynamic-routing:amqp'
-    - 'rabbitmq-server:amqp'
+  - - "neutron-dynamic-routing:bgp-speaker"
+    - "osci-frr:bgpclient"
 
-  - - 'neutron-dynamic-routing:bgp-speaker'
-    - 'osci-frr:bgpclient'
+  - - "keystone:shared-db"
+    - "keystone-mysql-router:shared-db"
+  - - "keystone-mysql-router:db-router"
+    - "mysql-innodb-cluster:db-router"
 
-  - - 'keystone:shared-db'
-    - 'keystone-mysql-router:shared-db'
-  - - 'keystone-mysql-router:db-router'
-    - 'mysql-innodb-cluster:db-router'
+  - - "neutron-api:shared-db"
+    - "neutron-api-mysql-router:shared-db"
+  - - "neutron-api-mysql-router:db-router"
+    - "mysql-innodb-cluster:db-router"
 
-  - - 'neutron-api:shared-db'
-    - 'neutron-api-mysql-router:shared-db'
-  - - 'neutron-api-mysql-router:db-router'
-    - 'mysql-innodb-cluster:db-router'
+  - - "neutron-api:amqp"
+    - "rabbitmq-server:amqp"
 
-  - - 'neutron-api:amqp'
-    - 'rabbitmq-server:amqp'
+  - - "neutron-api:identity-service"
+    - "keystone:identity-service"
 
-  - - 'neutron-api:identity-service'
-    - 'keystone:identity-service'
-
-  - - 'nova-mysql-router:db-router'
-    - 'mysql-innodb-cluster:db-router'
-  - - 'glance-mysql-router:db-router'
-    - 'mysql-innodb-cluster:db-router'
-  - - 'placement-mysql-router:db-router'
-    - 'mysql-innodb-cluster:db-router'
+  - - "nova-mysql-router:db-router"
+    - "mysql-innodb-cluster:db-router"
+  - - "glance-mysql-router:db-router"
+    - "mysql-innodb-cluster:db-router"
+  - - "placement-mysql-router:db-router"
+    - "mysql-innodb-cluster:db-router"
 
   - - keystone:identity-service
     - glance:identity-service

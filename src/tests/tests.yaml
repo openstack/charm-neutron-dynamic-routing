@@ -8,13 +8,14 @@ configure:
   - zaza.openstack.charm_tests.dragent.configure.setup
 
 gate_bundles:
-  - jammy-antelope
   - jammy-bobcat
   - jammy-caracal
+  - jammy-caracal-ovn
 smoke_bundles:
   - jammy-caracal
 dev_bundles:
   - noble-caracal
+  - noble-caracal-ovn
 target_deploy_status:
   neutron-api-plugin-ovn:
     workload-status: waiting
@@ -29,10 +30,10 @@ target_deploy_status:
     workload-status: waiting
     workload-status-message-prefix: "'certificates' awaiting server certificate data"
 
-
 tests:
   - zaza.openstack.charm_tests.dragent.tests.DRAgentTest
 
 tests_options:
   force_deploy:
     - noble-caracal
+    - noble-caracal-ovn

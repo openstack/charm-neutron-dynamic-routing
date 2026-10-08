@@ -82,7 +82,7 @@ applications:
     channel: 2024.1/edge
 
   neutron-dynamic-routing:
-    charm: ../../../neutron-dynamic-routing_ubuntu-22.04-amd64.charm
+    charm: ../../../neutron-dynamic-routing_ubuntu@22.04-amd64.charm
     num_units: 1
     options:
       openstack-origin: *openstack-origin
@@ -116,8 +116,6 @@ applications:
   neutron-api-plugin-ovn:
     charm: ch:neutron-api-plugin-ovn
     channel: 2024.1/edge
-    options:
-      enable-distributed-floating-ip: True
 
   vault:
     charm: ch:vault
