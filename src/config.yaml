@@ -1,3 +1,12 @@
 options:
   openstack-origin:
     default: yoga
+  bgp-router-id-mappings:
+    type: string
+    default: ''
+    description: |
+      Space-separated mapping of unit number to BGP router ID, e.g.
+      "0:10.0.0.1 1:10.0.0.2". Each value must be a 4-octet, unsigned,
+      non-zero integer that is unique within the Autonomous System.
+      When set, every unit must have an entry; a unit with no entry is
+      blocked. When unset, units default to the IP on the provider network.

@@ -17,6 +17,7 @@
 # needed on the class.
 
 import collections
+import ipaddress
 
 import charmhelpers.core as ch_core
 import charmhelpers.contrib.network.ip as ch_ip
@@ -45,6 +46,7 @@ OPENSTACK_RELEASE_KEY = ('neutron-dynamic-routing-charm.'
 
 SPEAKER_BINDING = 'bgp-speaker'
 PROVIDER_BINDING = 'provider'
+BGP_ROUTER_ID_MAPPINGS = 'bgp-router-id-mappings'
 
 
 # select the default release function
@@ -75,6 +77,45 @@ def speaker_ip(cls):
     """
 
     return ch_ip.get_relation_ip(SPEAKER_BINDING)
+
+
+def _parse_unit_router_ids(mappings: str) -> dict[str, str]:
+    """Parse the bgp-router-id-mappings option.
+
+    Each whitespace-separated entry must have the form '<unit>:<router-id>'
+    with a non-empty unit and router ID, and each unit may be mapped only
+    once.
+
+    :param mappings: raw value of the bgp-router-id-mappings option
+    :returns: a mapping of unit number to router ID
+    :rtype: dict[str, str]
+    :raises ValueError: if the option is malformed or maps a unit more than
+                        once
+    """
+    router_ids = {}
+    for mapping in mappings.split():
+        unit, sep, router_id = mapping.partition(':')
+        if not sep or not unit or not router_id:
+            raise ValueError(
+                '{} entry {!r} is malformed; expected '
+                '<unit>:<router-id>'.format(BGP_ROUTER_ID_MAPPINGS, mapping))
+        if unit in router_ids:
+            raise ValueError(
+                '{} has duplicate entries for unit {}'.format(
+                    BGP_ROUTER_ID_MAPPINGS, unit))
+        router_ids[unit] = router_id
+    return router_ids
+
+
+@os_adapters.config_property
+def bgp_router_id(cls):
+    """Return the BGP router ID for this unit."""
+    unit_number = ch_core.hookenv.local_unit().split('/')[-1]
+    router_ids = _parse_unit_router_ids(
+        ch_core.hookenv.config(BGP_ROUTER_ID_MAPPINGS))
+    if unit_number in router_ids:
+        return router_ids[unit_number]
+    return provider_ip(cls)
 
 
 class DRAgentRelationAdapters(os_adapters.OpenStackRelationAdapters):
@@ -169,6 +210,47 @@ class DRAgentCharm(charms_openstack.charm.OpenStackCharm):
         for service in self.services:
             ch_core.host.service('enable', service)
             ch_core.host.service('start', service)
+
+    @staticmethod
+    def _is_valid_bgp_router_id(value: str) -> bool:
+        # RFC6286: the BGP router ID must be a 4-octet, unsigned, non-zero
+        # integer.
+        try:
+            return int(ipaddress.IPv4Address(value)) != 0
+        except ValueError:
+            return False
+
+    def custom_assess_status_check(self):
+        """Check that the BGP router IDs are valid and unique."""
+        mappings = ch_core.hookenv.config(BGP_ROUTER_ID_MAPPINGS)
+        try:
+            router_ids = _parse_unit_router_ids(mappings)
+        except ValueError as e:
+            return 'blocked', str(e)
+        if len(set(router_ids.values())) != len(router_ids):
+            return 'blocked', '{} values must be unique'.format(
+                BGP_ROUTER_ID_MAPPINGS)
+
+        unit_number = ch_core.hookenv.local_unit().split('/')[-1]
+        if mappings and unit_number not in router_ids:
+            return 'blocked', (
+                '{} is set but has no router id for unit {}'.format(
+                    BGP_ROUTER_ID_MAPPINGS, unit_number))
+
+        if unit_number in router_ids:
+            router_id = router_ids[unit_number]
+            source = '{} value {} for unit {}'.format(
+                BGP_ROUTER_ID_MAPPINGS, router_id, unit_number)
+        else:
+            router_id = provider_ip(self.__class__)
+            source = 'default bgp-router-id {}'.format(router_id)
+
+        if not self._is_valid_bgp_router_id(router_id):
+            return 'blocked', (
+                '{} is not a 4-octet, unsigned, non-zero integer'.format(
+                    source))
+
+        return None, None
 
 
 class RockyDRAgentCharm(DRAgentCharm):
