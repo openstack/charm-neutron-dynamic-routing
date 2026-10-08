@@ -8,13 +8,13 @@ configure:
   - zaza.openstack.charm_tests.dragent.configure.setup
 
 gate_bundles:
-  - jammy-antelope
-  - jammy-bobcat
-  - jammy-caracal
+  - noble-caracal
+  - noble-caracal-ovn
 smoke_bundles:
-  - jammy-caracal
+  - noble-caracal
 dev_bundles:
   - noble-caracal
+  - noble-caracal-ovn
 target_deploy_status:
   neutron-api-plugin-ovn:
     workload-status: waiting
@@ -36,3 +36,4 @@ tests:
 tests_options:
   force_deploy:
     - noble-caracal
+    - noble-caracal-ovn
