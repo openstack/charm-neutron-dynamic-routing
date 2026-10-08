@@ -26,6 +26,8 @@ class Helper(test_utils.PatchHelper):
         self.patch_release(dragent.DRAgentCharm.release)
         self.SPEAKER_BINDING = "bgp-speaker"
         self.PROVIDER_BINDING = "provider"
+        self.patch_object(dragent.ch_core.hookenv, "local_unit")
+        self.local_unit.return_value = "neutron-dynamic-routing/0"
 
 
 class TestOpenStackDRAgent(Helper):
@@ -52,6 +54,22 @@ class TestOpenStackDRAgent(Helper):
         self.get_relation_ip.return_value = _ip
         dra = dragent.DRAgentCharm()
         self.assertEqual(dragent.provider_ip(dra), _ip)
+        self.get_relation_ip.assert_called_once_with(self.PROVIDER_BINDING)
+
+    def test_bgp_router_id_from_mapping(self):
+        self.patch_object(dragent.ch_core.hookenv, "config")
+        self.config.return_value = "0:10.0.0.1 1:10.0.0.2"
+        self.local_unit.return_value = "neutron-dynamic-routing/1"
+        dra = dragent.DRAgentCharm()
+        self.assertEqual(dragent.bgp_router_id(dra), "10.0.0.2")
+
+    def test_bgp_router_id_falls_back_to_provider_ip(self):
+        self.patch_object(dragent.ch_core.hookenv, "config")
+        self.config.return_value = ""
+        self.patch_object(dragent.ch_ip, "get_relation_ip")
+        self.get_relation_ip.return_value = "10.200.0.25"
+        dra = dragent.DRAgentCharm()
+        self.assertEqual(dragent.bgp_router_id(dra), "10.200.0.25")
         self.get_relation_ip.assert_called_once_with(self.PROVIDER_BINDING)
 
 
@@ -112,3 +130,97 @@ class TestDRAgentCharm(Helper):
                 'do_openstack_upgrade_db_migration') as base_db_migrate:
             dra.do_openstack_upgrade_db_migration()
         base_db_migrate.assert_not_called()
+
+    def test_assess_status_valid_router_id(self):
+        self.patch_object(dragent.ch_core.hookenv, "config")
+        self.config.return_value = ""
+        self.patch_object(dragent.ch_ip, "get_relation_ip")
+        self.get_relation_ip.return_value = "10.0.0.10"
+        dra = dragent.DRAgentCharm()
+        self.assertEqual(dra.custom_assess_status_check(), (None, None))
+
+    def test_assess_status_valid_mapped_router_id(self):
+        self.patch_object(dragent.ch_core.hookenv, "config")
+        self.config.return_value = "0:10.0.0.10"
+        self.patch_object(dragent.ch_ip, "get_relation_ip")
+        dra = dragent.DRAgentCharm()
+        self.assertEqual(dra.custom_assess_status_check(), (None, None))
+        self.get_relation_ip.assert_not_called()
+
+    def test_assess_status_invalid_default_router_id(self):
+        self.patch_object(dragent.ch_core.hookenv, "config")
+        self.config.return_value = ""
+        self.patch_object(dragent.ch_ip, "get_relation_ip")
+        dra = dragent.DRAgentCharm()
+        for router_id in ("2001:db8::1", "0.0.0.0"):
+            with self.subTest(router_id=router_id):
+                self.get_relation_ip.return_value = router_id
+                self.assertEqual(
+                    dra.custom_assess_status_check(),
+                    ("blocked",
+                     "default bgp-router-id {} is not a 4-octet,"
+                     " unsigned, non-zero integer".format(router_id)))
+
+    def test_assess_status_invalid_mapped_router_id(self):
+        self.patch_object(dragent.ch_core.hookenv, "config")
+        self.patch_object(dragent.ch_ip, "get_relation_ip")
+        self.get_relation_ip.return_value = "10.0.0.10"
+        dra = dragent.DRAgentCharm()
+        invalid_ids = ("2001:db8::1", "abc", "167772170", "256.0.0.1",
+                       "10.0.0", "0.0.0.0")
+        for router_id in invalid_ids:
+            with self.subTest(router_id=router_id):
+                self.config.return_value = "0:" + router_id
+                self.assertEqual(
+                    dra.custom_assess_status_check(),
+                    ("blocked",
+                     "bgp-router-id-mappings value {} for unit 0 is not a"
+                     " 4-octet, unsigned, non-zero integer".format(router_id)))
+                self.get_relation_ip.assert_not_called()
+
+    def test_assess_status_missing_mapped_router_id(self):
+        self.patch_object(dragent.ch_core.hookenv, "config")
+        self.config.return_value = "1:10.0.0.1"
+        self.patch_object(dragent.ch_ip, "get_relation_ip")
+        dra = dragent.DRAgentCharm()
+        self.assertEqual(
+            dra.custom_assess_status_check(),
+            ("blocked",
+             "bgp-router-id-mappings is set but has no router id for unit 0"))
+        self.get_relation_ip.assert_not_called()
+
+    def test_assess_status_malformed_mappings(self):
+        self.patch_object(dragent.ch_core.hookenv, "config")
+        self.patch_object(dragent.ch_ip, "get_relation_ip")
+        dra = dragent.DRAgentCharm()
+        for mappings in ("abc", "0:", ":10.0.0.1", "0:10.0.0.1 abc"):
+            with self.subTest(mappings=mappings):
+                self.config.return_value = mappings
+                entry = mappings.split()[-1]
+                self.assertEqual(
+                    dra.custom_assess_status_check(),
+                    ("blocked",
+                     "bgp-router-id-mappings entry '{}' is malformed;"
+                     " expected <unit>:<router-id>".format(entry)))
+                self.get_relation_ip.assert_not_called()
+
+    def test_assess_status_duplicate_unit_numbers(self):
+        self.patch_object(dragent.ch_core.hookenv, "config")
+        self.config.return_value = "0:10.0.0.1 0:10.0.0.2"
+        self.patch_object(dragent.ch_ip, "get_relation_ip")
+        dra = dragent.DRAgentCharm()
+        self.assertEqual(
+            dra.custom_assess_status_check(),
+            ("blocked",
+             "bgp-router-id-mappings has duplicate entries for unit 0"))
+        self.get_relation_ip.assert_not_called()
+
+    def test_assess_status_duplicate_router_ids(self):
+        self.patch_object(dragent.ch_core.hookenv, "config")
+        self.config.return_value = "0:10.0.0.1 1:10.0.0.1"
+        self.patch_object(dragent.ch_ip, "get_relation_ip")
+        dra = dragent.DRAgentCharm()
+        self.assertEqual(
+            dra.custom_assess_status_check(),
+            ("blocked", "bgp-router-id-mappings values must be unique"))
+        self.get_relation_ip.assert_not_called()
