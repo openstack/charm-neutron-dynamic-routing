@@ -10,3 +10,11 @@ options:
       non-zero integer that is unique within the Autonomous System.
       When set, every unit must have an entry; a unit with no entry is
       blocked. When unset, units default to the IP on the provider network.
+  bgp-router-id-fallback:
+    type: string
+    default: provider
+    description: |
+      How a unit without an entry in bgp-router-id-mappings chooses its BGP
+      router ID. Valid values are 'provider' (the IP on the provider
+      network) and 'highest' (the highest IPv4 address of any non-loopback
+      interface on the unit).
