@@ -72,6 +72,43 @@ class TestOpenStackDRAgent(Helper):
         self.assertEqual(dragent.bgp_router_id(dra), "10.200.0.25")
         self.get_relation_ip.assert_called_once_with(self.PROVIDER_BINDING)
 
+    def _set_config(self, **options):
+        config = {"bgp-router-id-mappings": ""}
+        config.update(options)
+        self.patch_object(dragent.ch_core.hookenv, "config")
+        self.config.side_effect = lambda key=None: (
+            config if key is None else config[key])
+
+    def test_bgp_router_id_provider_fallback(self):
+        self._set_config(**{"bgp-router-id-fallback": "provider"})
+        self.patch_object(dragent.ch_ip, "get_relation_ip")
+        self.get_relation_ip.return_value = "10.200.0.25"
+        dra = dragent.DRAgentCharm()
+        self.assertEqual(dragent.bgp_router_id(dra), "10.200.0.25")
+
+    def test_bgp_router_id_mapping_beats_highest_fallback(self):
+        self._set_config(**{"bgp-router-id-fallback": "highest",
+                            "bgp-router-id-mappings": "0:10.0.0.1"})
+        dra = dragent.DRAgentCharm()
+        self.assertEqual(dragent.bgp_router_id(dra), "10.0.0.1")
+
+    def test_bgp_router_id_highest_ignores_loopback(self):
+        self._set_config(**{"bgp-router-id-fallback": "highest"})
+        addresses = {
+            "lo": {dragent.netifaces.AF_INET: [{"addr": "127.0.0.1"}]},
+            "eth0": {dragent.netifaces.AF_INET: [{"addr": "10.0.0.9"},
+                                                 {"addr": "10.0.0.10"}]},
+            "eth1": {dragent.netifaces.AF_INET: [{"addr": "192.168.1.5"}],
+                     dragent.netifaces.AF_INET6: [{"addr": "fe80::1"}]},
+            "eth2": {dragent.netifaces.AF_INET6: [{"addr": "fe80::2"}]},
+        }
+        self.patch_object(dragent.netifaces, "interfaces")
+        self.interfaces.return_value = list(addresses)
+        self.patch_object(dragent.netifaces, "ifaddresses")
+        self.ifaddresses.side_effect = addresses.__getitem__
+        dra = dragent.DRAgentCharm()
+        self.assertEqual(dragent.bgp_router_id(dra), "192.168.1.5")
+
 
 class TestDRAgentCharm(Helper):
 
@@ -136,6 +173,22 @@ class TestDRAgentCharm(Helper):
         self.config.return_value = ""
         self.patch_object(dragent.ch_ip, "get_relation_ip")
         self.get_relation_ip.return_value = "10.0.0.10"
+        dra = dragent.DRAgentCharm()
+        self.assertEqual(dra.custom_assess_status_check(), (None, None))
+
+    def test_assess_status_highest_fallback_ignores_ipv6_provider(self):
+        config = {"bgp-router-id-mappings": "",
+                  "bgp-router-id-fallback": "highest"}
+        self.patch_object(dragent.ch_core.hookenv, "config")
+        self.config.side_effect = lambda key=None: (
+            config if key is None else config[key])
+        self.patch_object(dragent.ch_ip, "get_relation_ip")
+        self.get_relation_ip.return_value = "2001:db8::1"
+        self.patch_object(dragent.netifaces, "interfaces")
+        self.interfaces.return_value = ["eth0"]
+        self.patch_object(dragent.netifaces, "ifaddresses")
+        self.ifaddresses.return_value = {
+            dragent.netifaces.AF_INET: [{"addr": "10.0.0.10"}]}
         dra = dragent.DRAgentCharm()
         self.assertEqual(dra.custom_assess_status_check(), (None, None))
 

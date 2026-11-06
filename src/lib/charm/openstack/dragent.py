@@ -19,6 +19,8 @@
 import collections
 import ipaddress
 
+import netifaces
+
 import charmhelpers.core as ch_core
 import charmhelpers.contrib.network.ip as ch_ip
 
@@ -47,6 +49,7 @@ OPENSTACK_RELEASE_KEY = ('neutron-dynamic-routing-charm.'
 SPEAKER_BINDING = 'bgp-speaker'
 PROVIDER_BINDING = 'provider'
 BGP_ROUTER_ID_MAPPINGS = 'bgp-router-id-mappings'
+BGP_ROUTER_ID_FALLBACK = 'bgp-router-id-fallback'
 
 
 # select the default release function
@@ -107,6 +110,17 @@ def _parse_unit_router_ids(mappings: str) -> dict[str, str]:
     return router_ids
 
 
+def _highest_ipv4_address() -> str:
+    """Return the highest IPv4 address of any non-loopback interface."""
+    addresses = []
+    for nic in netifaces.interfaces():
+        for entry in netifaces.ifaddresses(nic).get(netifaces.AF_INET, []):
+            address = ipaddress.IPv4Address(entry['addr'])
+            if not address.is_loopback:
+                addresses.append(address)
+    return str(max(addresses))
+
+
 @os_adapters.config_property
 def bgp_router_id(cls):
     """Return the BGP router ID for this unit."""
@@ -115,6 +129,8 @@ def bgp_router_id(cls):
         ch_core.hookenv.config(BGP_ROUTER_ID_MAPPINGS))
     if unit_number in router_ids:
         return router_ids[unit_number]
+    if ch_core.hookenv.config(BGP_ROUTER_ID_FALLBACK) == 'highest':
+        return _highest_ipv4_address()
     return provider_ip(cls)
 
 
@@ -242,7 +258,7 @@ class DRAgentCharm(charms_openstack.charm.OpenStackCharm):
             source = '{} value {} for unit {}'.format(
                 BGP_ROUTER_ID_MAPPINGS, router_id, unit_number)
         else:
-            router_id = provider_ip(self.__class__)
+            router_id = bgp_router_id(self.__class__)
             source = 'default bgp-router-id {}'.format(router_id)
 
         if not self._is_valid_bgp_router_id(router_id):
